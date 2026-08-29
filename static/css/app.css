@@ -1,0 +1,88 @@
+:root {
+  /* Light theme (default) */
+  --color-bg: #fafafa;
+  --color-surface: #ffffff;
+  --color-surface-alt: #f4f4f5;
+  --color-border: #e4e4e7;
+  --color-text-primary: #18181b;
+  --color-text-secondary: #71717a;
+  /* --color-text-secondary: #ffffff73; */
+  --color-accent: #059669;       /* emerald-600 */
+  --color-accent-hover: #047857; /* emerald-700 */
+  --color-accent-soft: #d1fae5;  /* emerald-100, for badges */
+  --color-danger: #dc2626;
+  --color-danger-soft: #fee2e2;
+}
+
+html, body {
+  overflow-x: clip;
+  max-width: 100vw;
+}
+
+
+.dark {
+  --color-bg: #0a0a0a;
+  --color-surface: #141414;
+  --color-surface-alt: #1c1c1c;
+  --color-border: #27272a;       /* neutral-800 */
+  --color-text-primary: #fafafa;
+  --color-text-secondary: #ffffff73;
+  /* --color-text-secondary: #a1a1aa; */
+  --color-accent: #34d399;       /* emerald-400, brighter for dark bg */
+  --color-accent-hover: #6ee7b7;
+  --color-accent-soft: #064e3b;
+  --color-danger: #f87171;
+  --color-danger-soft: #450a0a;
+}
+
+body {
+  background-color: var(--color-bg);
+  color: var(--color-text-primary);
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.scrollbar-none::-webkit-scrollbar { display: none; }
+.scrollbar-none { scrollbar-width: none; }
+
+html, body {
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
+#cart-sheet, #store-sheet {
+  overscroll-behavior: contain;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--color-text-primary);
+  -webkit-box-shadow: 0 0 0px 1000px var(--color-surface-alt) inset;
+  transition: background-color 5000s ease-in-out 0s;
+  caret-color: var(--color-text-primary);
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  /* font-family: 'Space Grotesk', sans-serif; */
+}
+
+.numkey {
+  background-color: var(--color-surface-alt);
+  border: 1px solid var(--color-border);
+  border-radius: 0.75rem;
+  height: 3.25rem;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.numkey:active {
+  border-color: var(--color-accent);
+}
+.restock-field.active {
+  border-color: var(--color-accent);
+  background-color: var(--color-accent-soft);
+}

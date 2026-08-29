@@ -1,0 +1,55 @@
+{{define "store-form-page"}}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{.PageTitle}} — Jarabiz</title>
+    {{template "theme-init-script" .}}
+    {{template "head-assets" .}}
+</head>
+<body class="bg-bg text-text-primary min-h-screen">
+
+    {{template "focused-page-header" dict "Title" .PageTitle}}
+
+    <main class="pt-20 px-3 md:px-8 max-w-2xl mx-auto pb-24">
+        <form hx-post="{{if .IsEdit}}/stores/{{.Form.ID}}/edit{{else}}/stores/new{{end}}" hx-target="#store-form-error">
+
+            {{template "ui-input" dict "Label" "Store Name" "Type" "text" "Name" "name" "Placeholder" "e.g. Spread Medicen & Store" "Value" .Form.Name "Required" true}}
+            {{template "ui-input" dict "Label" "Address" "Type" "text" "Name" "address" "Placeholder" "e.g. Benin, Edo" "Value" .Form.Address "Required" true}}
+
+            {{if .IsEdit}}
+            <div class="flex items-center justify-between bg-surface border border-border rounded-xl p-3.5 mb-4">
+                <div>
+                    <p class="text-sm font-medium text-text-primary">Active</p>
+                    <p class="text-xs text-text-secondary">Staff can sell from this store</p>
+                </div>
+                <button type="button" onclick="toggleFormSwitch(this)"
+                    data-on="{{if .Form.IsActive}}true{{else}}false{{end}}"
+                    class="relative w-11 h-6 rounded-full {{if .Form.IsActive}}bg-accent{{else}}bg-border{{end}} transition-colors shrink-0">
+                    <span class="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform {{if .Form.IsActive}}translate-x-5{{else}}translate-x-0.5{{end}}"></span>
+                </button>
+                <input type="hidden" name="is_active" id="is_active_input" value="{{.Form.IsActive}}" />
+            </div>
+            {{end}}
+
+            <div id="store-form-error" class="mb-3"></div>
+        </form>
+    </main>
+
+    <div class="fixed bottom-0 left-0 right-0 md:left-[72px] bg-surface border-t border-border p-4 z-30">
+        <div class="max-w-2xl mx-auto flex gap-3">
+            {{if .IsEdit}}
+            <button class="px-5 py-3 rounded-lg border border-danger/30 text-danger text-sm font-medium hover:bg-danger-soft">
+                Delete
+            </button>
+            {{end}}
+            {{template "ui-button" dict "Label" .SubmitLabel "Type" "submit" "OnClick" "document.querySelector('form').requestSubmit()"}}
+        </div>
+    </div>
+
+    <script src="/static/js/product-form.js"></script>
+    {{template "theme-toggle-script" .}}
+</body>
+</html>
+{{end}}

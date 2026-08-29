@@ -1,0 +1,51 @@
+{{define "settings-page"}}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Preferences — Jarabiz</title>
+    {{template "theme-init-script" .}}
+    {{template "head-assets" .}}
+</head>
+<body class="bg-bg text-text-primary min-h-screen">
+
+    {{template "focused-page-header" dict "Title" "Preferences"}}
+
+    <main class="pt-20 px-3 md:px-8 max-w-2xl mx-auto pb-10">
+
+        <p class="text-xs font-medium text-text-secondary uppercase tracking-wide mb-2 px-1">Notifications</p>
+        <div class="bg-surface border border-border rounded-2xl divide-y divide-border overflow-hidden mb-6">
+            {{range .Notifications}}
+            <div class="flex items-center justify-between p-4">
+                <div class="pr-3">
+                    <p class="text-sm font-medium text-text-primary">{{.Label}}</p>
+                    <p class="text-xs text-text-secondary mt-0.5">{{.Desc}}</p>
+                </div>
+                <button type="button" onclick="toggleFormSwitch(this)"
+                    data-on="{{if .Enabled}}true{{else}}false{{end}}"
+                    class="relative w-11 h-6 rounded-full {{if .Enabled}}bg-accent{{else}}bg-border{{end}} transition-colors shrink-0">
+                    <span class="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform {{if .Enabled}}translate-x-5{{else}}translate-x-0.5{{end}}"></span>
+                </button>
+            </div>
+            {{end}}
+        </div>
+
+        <p class="text-xs font-medium text-text-secondary uppercase tracking-wide mb-2 px-1">Devices</p>
+        <div class="bg-surface border border-border rounded-2xl divide-y divide-border overflow-hidden mb-6">
+            {{template "account-item" dict "Icon" "printer" "Title" "Printer Setup" "Desc" "Connect and configure receipt printer" "Href" "/settings/printer"}}
+            {{template "account-item" dict "Icon" "scan" "Title" "Barcode Scanner" "Desc" "Pair a Bluetooth barcode scanner" "Href" "/settings/scanner"}}
+        </div>
+
+        <p class="text-xs font-medium text-text-secondary uppercase tracking-wide mb-2 px-1">Security</p>
+        <div class="bg-surface border border-border rounded-2xl divide-y divide-border overflow-hidden">
+            {{template "account-item" dict "Icon" "lock" "Title" "Change Password" "Desc" "Update your account password" "Href" "/settings/password"}}
+        </div>
+
+    </main>
+
+    <script src="/static/js/product-form.js"></script>
+    {{template "theme-toggle-script" .}}
+</body>
+</html>
+{{end}}

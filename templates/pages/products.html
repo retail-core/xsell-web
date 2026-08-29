@@ -1,0 +1,84 @@
+{{define "products-content"}}
+<div class="max-w-5xl mx-auto mt-3">
+  <!-- Category chips (same pattern as POS) -->
+  <div
+    class="fixed top-16 left-0 right-0 z-20 bg-bg pt-1 pb-3 px-2 md:static md:pt-0 mt-1"
+  >
+    <div class="flex gap-2 overflow-x-auto scrollbar-none px-2">
+      {{range .Categories}}
+      <button
+        class="shrink-0 flex flex-col items-start px-4 py-2 rounded-xl border {{if .Active}}border-accent bg-accent-soft text-accent{{else}}border-border text-text-secondary hover:border-text-secondary{{end}}"
+      >
+        <span class="text-sm font-medium">{{.Name}}</span>
+        <span class="text-[11px] opacity-70">{{.Count}}</span>
+      </button>
+      {{end}}
+    </div>
+  </div>
+
+  <!-- Product list -->
+  <div class="pt-20 pb-24 divide-y divide-border">
+    {{range .Products}}
+    <a href="/products/{{.ID}}/edit" class="flex gap-3 py-3">
+      <div
+        class="w-14 h-14 rounded-xl bg-surface-alt borde border-border overflow-hidden shrink-0 flex items-center justify-center text-text-secondary"
+      >
+        {{if .ImageURL}}
+        <img
+          src="{{.ImageURL}}"
+          alt="{{.Name}}"
+          class="w-full h-full object-cover"
+        />
+        {{else}} {{template "icon-product-outline"}} {{end}}
+      </div>
+
+      <div class="flex-1 min-w-0">
+        <p class="text-sm font-medium text-text-primary truncate mb-1">
+          {{.Name}}
+        </p>
+        <div class="flex items-center gap-2 flex-wrap">
+          <span
+            class="text-sm font-semibold {{if .LowStock}}text-danger{{else}}text-accent{{end}}"
+          >
+            {{.StockLabel}}
+          </span>
+          <span
+            class="text-xs px-2 py-0.5 rounded-full bg-surface-alt border border-border text-text-secondary"
+          >
+            {{.Category}}
+          </span>
+        </div>
+      </div>
+
+      <div
+        onclick="
+          event.preventDefault();
+          event.stopPropagation();
+        "
+        class="text-right shrink-0"
+      >
+        <p class="text-sm font-semibold text-text-primary mb-2 font-display">
+          {{.Price}}
+        </p>
+        {{template "product-menu" .}}
+      </div>
+    </a>
+    {{end}}
+  </div>
+</div>
+
+<!-- Floating add button -->
+<button
+  onclick="toggleAddProductSheet()"
+  class="fixed bottom-20 md:bottom-6 right-4 md:right-8 w-14 h-14 rounded-full bg-accent text-black flex items-center justify-center shadow-lg z-30 shadow-accent-soft"
+>
+  {{template "icon-plus-outline"}}
+</button>
+
+{{template "add-product-sheet" .}}
+
+
+<script src="/static/js/product.js">
+</script>
+
+{{template "restock-sheet" .}} {{end}}

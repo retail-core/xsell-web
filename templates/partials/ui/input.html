@@ -1,0 +1,16 @@
+{{define "ui-input"}}
+<div class="mb-6">
+    <label class="block text-sm font-medium text-text-secondary mb-1.5">{{.Label}}</label>
+    <input
+        type="{{.Type}}"
+        name="{{.Name}}"
+        placeholder="{{.Placeholder}}"
+        value="{{.Value}}"
+        {{if .Required}}required{{end}}
+        class="w-full bg-bg border-[0.94px] focus:border dark:border-accent-soft border-accent rounded-lg px-3.5 py-2.5 text-sm text-text-primary placeholder:text-text-secondary/65 placeholder:text-sm focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent transition-colors"
+    />
+    {{if .Error}}
+    <p class="text-xs text-danger mt-1">{{.Error}}</p>
+    {{end}}
+</div>
+{{end}}

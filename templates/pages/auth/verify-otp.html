@@ -1,0 +1,109 @@
+{{define "verify-otp-page"}}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>xSell — Verify Email</title>
+    {{template "theme-init-script" .}}
+    {{template "head-assets" .}}
+</head>
+<body class="bg-bg text-text-primary min-h-screen flex flex-col items-center justify-center px-2 py-8">
+    {{template "theme-toggle-btn" .}}
+    <div class="w-full max-w-sm">
+        {{template "brand-lockup" dict "Size" "lg" "ShowTagline" false}}
+
+        <div class="bg-surfac border border-accent rounded-3xl p-6">
+            <h2 class="text-lg font-display font-semibold text-text-primary mb-1">Verify your email</h2>
+            <p class="text-sm text-text-secondary mb-6">
+                We sent a 6-digit code to <span class="text-text-primary font-medium">{{.Email}}</span>
+            </p>
+
+            <form hx-post="/verify-otp" hx-target="#otp-error-box" hx-swap="innerHTML">
+
+                <div class="flex justify-between gap-2 mb-6" id="otp-inputs">
+                    <input type="text" inputmode="numeric" maxlength="1" name="otp1" required
+                        class="otp-box w-full aspect-square text-center text-xl font-display font-semibold bg-surface-alt border border-border rounded-lg text-text-primary focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent" />
+                    <input type="text" inputmode="numeric" maxlength="1" name="otp2" required
+                        class="otp-box w-full aspect-square text-center text-xl font-display font-semibold bg-surface-alt border border-border rounded-lg text-text-primary focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent" />
+                    <input type="text" inputmode="numeric" maxlength="1" name="otp3" required
+                        class="otp-box w-full aspect-square text-center text-xl font-display font-semibold bg-surface-alt border border-border rounded-lg text-text-primary focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent" />
+                    <input type="text" inputmode="numeric" maxlength="1" name="otp4" required
+                        class="otp-box w-full aspect-square text-center text-xl font-display font-semibold bg-surface-alt border border-border rounded-lg text-text-primary focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent" />
+                    <input type="text" inputmode="numeric" maxlength="1" name="otp5" required
+                        class="otp-box w-full aspect-square text-center text-xl font-display font-semibold bg-surface-alt border border-border rounded-lg text-text-primary focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent" />
+                    <input type="text" inputmode="numeric" maxlength="1" name="otp6" required
+                        class="otp-box w-full aspect-square text-center text-xl font-display font-semibold bg-surface-alt border border-border rounded-lg text-text-primary focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent" />
+                </div>
+
+                <div id="otp-error-box" class="mb-3"></div>
+
+                {{template "ui-button" dict "Label" "Verify" "Type" "submit"}}
+            </form>
+
+            <div class="flex items-center justify-center gap-1.5 mt-5 text-sm">
+                <span class="text-text-secondary">Didn't get the code?</span>
+                <button id="resend-btn" onclick="resendOTP()" disabled class="text-text-secondary font-medium">
+                    Resend in <span id="resend-timer">60</span>s
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+      // Auto-advance between OTP boxes
+      const otpInputs = document.querySelectorAll('.otp-box');
+      otpInputs.forEach((input, idx) => {
+        input.addEventListener('input', () => {
+          if (input.value.length === 1 && idx < otpInputs.length - 1) {
+            otpInputs[idx + 1].focus();
+          }
+        });
+        input.addEventListener('keydown', (e) => {
+          if (e.key === 'Backspace' && input.value === '' && idx > 0) {
+            otpInputs[idx - 1].focus();
+          }
+        });
+      });
+
+      // Resend countdown
+      let seconds = 60;
+      const timerEl = document.getElementById('resend-timer');
+      const resendBtn = document.getElementById('resend-btn');
+      const countdown = setInterval(() => {
+        seconds--;
+        timerEl.textContent = seconds;
+        if (seconds <= 0) {
+          clearInterval(countdown);
+          resendBtn.disabled = false;
+          resendBtn.innerHTML = 'Resend code';
+          resendBtn.classList.add('text-accent');
+        }
+      }, 1000);
+
+      function resendOTP() {
+        // TODO: hx-post to /resend-otp
+        seconds = 60;
+        resendBtn.disabled = true;
+        resendBtn.classList.remove('text-accent');
+        const countdown2 = setInterval(() => {
+          seconds--;
+          timerEl.textContent = seconds;
+          resendBtn.innerHTML = 'Resend in <span id="resend-timer">' + seconds + '</span>s';
+          if (seconds <= 0) {
+            clearInterval(countdown2);
+            resendBtn.disabled = false;
+            resendBtn.innerHTML = 'Resend code';
+            resendBtn.classList.add('text-accent');
+          }
+        }, 1000);
+      }
+    </script>
+    {{template "theme-toggle-script" .}}
+</body>
+</html>
+{{end}}
+
+{{define "verify-otp-error"}}
+<p class="text-danger text-sm">{{.Error}}</p>
+{{end}}

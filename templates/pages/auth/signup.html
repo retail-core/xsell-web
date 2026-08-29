@@ -1,0 +1,130 @@
+{{define "signup-page"}}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>xSell — Create Account</title>
+    {{template "theme-init-script" .}}
+    <script src="https://unpkg.com/htmx.org@1.9.12"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              bg: "var(--color-bg)",
+              surface: "var(--color-surface)",
+              "surface-alt": "var(--color-surface-alt)",
+              border: "var(--color-border)",
+              "text-primary": "var(--color-text-primary)",
+              "text-secondary": "var(--color-text-secondary)",
+              accent: "var(--color-accent)",
+              "accent-hover": "var(--color-accent-hover)",
+              "accent-soft": "var(--color-accent-soft)",
+              danger: "var(--color-danger)",
+              "danger-soft": "var(--color-danger-soft)",
+            },
+            fontFamily: {
+              sans: ["Inter", "sans-serif"],
+              display: ["Space Grotesk", "sans-serif"],
+            },
+          },
+        },
+      };
+    </script>
+    <link rel="stylesheet" href="/static/css/app.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body
+    class="bg-bg text-text-primary min-h-screen flex flex-col items-center justify-center px-2 py-8"
+  >
+    {{template "theme-toggle-btn" .}}
+
+    <div class="w-full max-w-sm">
+      {{template "brand-lockup" dict "Size" "lg" "ShowTagline" false}}
+
+      <div class="bg-surfac border dark:border-accent-soft border-accent rounded-3xl p-6">
+        <h2 class="text-xl font-display font-semibold text-text-primary mb-1">
+          Create your account
+        </h2>
+        <p class="text-sm text-text-secondary mb-6">
+          Start managing your business in minutes
+        </p>
+
+        <form
+          hx-post="/signup"
+          hx-target="#signup-error-box"
+          hx-swap="innerHTML"
+        >
+          {{template "ui-input" dict "Label" "Full Name" "Type" "text" "Name"
+          "full_name" "Placeholder" "John Doe" "Required" true}} {{template
+          "ui-input" dict "Label" "Email Address" "Type" "email" "Name" "email"
+          "Placeholder" "you@example.com" "Required" true}}
+
+          <div class="mb-4">
+            <label class="block text-sm font-medium text-text-secondary mb-1.5"
+              >Password</label
+            >
+            <div class="relative">
+              <input
+                type="password"
+                name="password"
+                id="signup-password"
+                required
+                placeholder="••••••••"
+                class="w-full bg-bg border-[0.94px] focus:border dark:border-accent-soft border-accent rounded-xl px-3.5 py-3 text-sm text-text-primary placeholder:text-text-secondary/60 placeholder:text-sm focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent transition-colors"
+              />
+              <button
+                type="button"
+                onclick="togglePasswordVisibility()"
+                class="absolute right-3 top-1/2 -translate-y-1/2 text-text-secondary hover:text-text-primary"
+              >
+                <span id="eye-open">{{template "icon-eye-outline"}}</span>
+                <span id="eye-closed" class="hidden"
+                  >{{template "icon-eyeslash-outline"}}</span
+                >
+              </button>
+            </div>
+          </div>
+
+          <div id="signup-error-box" class="mb-3"></div>
+
+          {{template "ui-button" dict "Label" "Create Account" "Type" "submit"}}
+        </form>
+      </div>
+
+      <p class="text-center text-sm text-text-secondary mt-6">
+        Already have an account?
+        <a href="/login" class="text-accent font-medium">Log In</a>
+      </p>
+    </div>
+
+    <script>
+      function togglePasswordVisibility() {
+        const input = document.getElementById("signup-password");
+        const isPassword = input.type === "password";
+        input.type = isPassword ? "text" : "password";
+        document
+          .getElementById("eye-open")
+          .classList.toggle("hidden", isPassword);
+        document
+          .getElementById("eye-closed")
+          .classList.toggle("hidden", !isPassword);
+      }
+    </script>
+    {{template "theme-toggle-script" .}}
+  </body>
+</html>
+{{end}} {{define "signup-error"}}
+<p class="text-danger text-sm">{{.Error}}</p>
+{{end}}

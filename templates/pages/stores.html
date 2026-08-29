@@ -1,0 +1,45 @@
+{{define "stores-page"}}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Stores — Jarabiz</title>
+    {{template "theme-init-script" .}}
+    {{template "head-assets" .}}
+</head>
+<body class="bg-bg text-text-primary min-h-screen">
+
+    {{template "focused-page-header" dict "Title" "My Stores"}}
+
+    <main class="pt-20 px-3 md:px-8 max-w-2xl mx-auto pb-24">
+
+        <p class="text-sm text-text-secondary mb-4">{{len .Stores}} locations</p>
+
+        <div class="bg-surface border border-border rounded-2xl divide-y divide-border overflow-hidden">
+            {{range .Stores}}
+            <a href="/stores/{{.ID}}/edit" class="flex items-center gap-3 p-4 hover:bg-surface-alt">
+                <div class="w-11 h-11 rounded-xl bg-accent-soft text-accent flex items-center justify-center shrink-0">
+                    {{template "icon-location-outline"}}
+                </div>
+                <div class="flex-1 min-w-0">
+                    <p class="text-sm font-display font-medium text-text-primary truncate">{{.Name}}</p>
+                    <p class="text-xs text-text-secondary">{{.Address}}</p>
+                </div>
+                {{if not .IsActive}}
+                <span class="text-xs font-medium px-2.5 py-1 rounded-full bg-danger-soft text-danger shrink-0">Inactive</span>
+                {{end}}
+            </a>
+            {{end}}
+        </div>
+
+    </main>
+
+    <a href="/stores/new" class="fixed bottom-6 right-4 md:right-8 w-14 h-14 rounded-full bg-accent text-black flex items-center justify-center shadow-lg z-30">
+        {{template "icon-plus-outline"}}
+    </a>
+
+    {{template "theme-toggle-script" .}}
+</body>
+</html>
+{{end}}

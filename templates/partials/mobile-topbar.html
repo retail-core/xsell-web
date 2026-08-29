@@ -1,0 +1,18 @@
+{{define "mobile-topbar"}}
+<header
+class="md:hidden fixed top-2 left-2 right-2 h-14 bg-surface border border-border rounded-3xl flex items-center justify-between px-4 z-40 shadow-sm">
+  <h1 class="text-xl font-semibold font-display text-text-primary">{{.PageTitle}}</h1>
+  <div class="flex items-center gap-4">
+    {{range .HeaderActions}}
+    <button onclick="{{.OnClick}}" class="text-text-primary hover:text-text-primary">
+      {{if eq .Icon "grid"}}{{template "icon-grid-outline"}}
+      {{else if eq .Icon "bell"}}{{template "icon-bell-outline"}}
+      {{else if eq .Icon "search"}}{{template "icon-search-outline"}}
+      {{else if eq .Icon "theme"}}{{template "icon-theme-toggle"}}
+      {{else if eq .Icon "scan"}}{{template "icon-scan-outline"}}
+      {{end}}
+    </button>
+    {{end}}
+  </div>
+</header>
+{{end}}

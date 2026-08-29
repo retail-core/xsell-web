@@ -1,0 +1,80 @@
+{{define "account-content"}}
+<div class="max-w-2xl mx-auto mt-4">
+
+    <!-- Profile card -->
+    <button onclick="toggleStoreSwitcher()" class="w-full flex items-center justify-between bg-surface border border-accent rounded-3xl p-4 pb-3 mb-6 hover:border-accent transition-colors">
+        <div class="flex items-center gap-3 min-w-0">
+            <div class="w-10 h-10 rounded-3xl bg-accent-soft text-accent flex items-center justify-center shrink-0">
+                {{template "icon-location-outline"}}
+            </div>
+            <div class="text-left min-w-0">
+                {{if .ActiveStore}}
+                <p class="text-lg font-semibold text-text-primary truncate">{{.ActiveStore.Name}}</p>
+                {{if .ActiveStore.Address}}
+                <p class="text-xs text-text-secondary">{{.ActiveStore.Address}}</p>
+                
+                {{end}}
+                {{else}}
+                <p class="text-sm font-semibold text-text-primary">No store selected</p>
+                <p class="text-xs text-text-secondary">Tap to choose a store</p>
+                {{end}}
+            </div>
+        </div>
+        <span class="text-text-secondary shrink-0">{{template "icon-chevron-right"}}</span>
+    </button>
+
+    <!-- Business Operations -->
+    <p class="text-xs font-medium text-text-secondary  tracking-wide mb-2 px-1">Business Operations</p>
+    <div class="bg-surface border border-border rounded-3xl divide-y divide-border mb-6 overflow-hidden">
+        {{if .IsOwner}}
+        {{template "account-item" dict "Icon" "team" "Title" "My Staff" "Desc" "Manage team, roles & access" "Href" "/staff"}}
+        {{template "account-item" dict "Icon" "house" "Title" "My Stores" "Desc" "View and manage all store locations" "Href" "/stores"}}
+        {{end}}
+        {{template "account-item" dict "Icon" "handcoin" "Title" "Credit & Debtors" "Desc" "Track who owes you and how much" "Badge" "New"}}
+        {{template "account-item" dict "Icon" "expense" "Title" "Expenses" "Desc" "Record and monitor business spending" "Badge" "New"}}
+    </div>
+
+    <!-- Smart Features -->
+     {{if .IsOwner}}
+    <p class="text-xs font-medium text-text-secondary tracking-wide mb-2 px-1">Smart Features</p>
+    <div class="bg-surface border border-border rounded-3xl divide-y divide-border mb-6 overflow-hidden">
+        {{template "account-item" dict "Icon" "barchart" "Title" "Reports & Insights" "Desc" "Profits, losses and business trends" "Badge" "New"}}
+        {{template "account-item" dict "Icon" "sparkle" "Title" "AI Advisor" "Desc" "Smart tips to grow your business" "Badge" "New"}}
+    </div>
+    {{end}}
+
+    <!-- Account & Settings -->
+    <p class="text-xs font-medium text-text-secondary uppercase tracking-wide mb-2 px-1 overflow-hidden">Account & Settings</p>
+    <div class="bg-surface border border-border rounded-3xl divide-y divide-border mb-6 overflow-hidden">
+        {{template "account-item" dict "Icon" "settings" "Title" "Preferences" "Desc" "Devices, notifications & app settings" "Href" "/settings"}}
+        {{if .IsOwner}}
+        {{template "account-item" dict "Icon" "creditcard" "Title" "Billing & Subscription" "Desc" "Manage your plan and payments" "Href" "/subscription"}}
+        {{end}}
+    </div>
+
+    <button hx-post="/logout" class="w-full flex items-center justify-center gap-2 text-danger border border-danger/30 rounded-3xl py-3 font-medium hover:bg-danger-soft">
+        {{template "icon-logout-outline"}}
+        Log Out
+    </button>
+
+</div>
+{{template "store-switcher-sheet" .}}
+<script>
+
+    function toggleStoreSwitcher() {
+        const sheet = document.getElementById('store-sheet');
+        const isOpening = sheet.classList.contains('translate-y-full');
+        sheet.classList.toggle('translate-y-full');
+        document.getElementById('store-sheet-backdrop').classList.toggle('hidden');
+        lockBodyScroll(isOpening);
+
+        if (isOpening) {
+            htmx.ajax('GET', '/store-switcher', '#store-sheet-body');
+        }
+    }
+  function toggleTheme() {
+        document.documentElement.classList.toggle('dark');
+        localStorage.setItem('xsell-theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+      }
+</script>
+{{end}}

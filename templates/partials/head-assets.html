@@ -1,0 +1,42 @@
+{{define "head-assets"}}
+<script src="https://unpkg.com/htmx.org@1.9.12"></script>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          bg: "var(--color-bg)",
+          surface: "var(--color-surface)",
+          "surface-alt": "var(--color-surface-alt)",
+          border: "var(--color-border)",
+          "text-primary": "var(--color-text-primary)",
+          "text-secondary": "var(--color-text-secondary)",
+          accent: "var(--color-accent)",
+          "accent-hover": "var(--color-accent-hover)",
+          "accent-soft": "var(--color-accent-soft)",
+          danger: "var(--color-danger)",
+          "danger-soft": "var(--color-danger-soft)",
+        },
+        fontFamily: {
+          sans: ["Inter", "sans-serif"],
+          display: ["Space Grotesk", "sans-serif"],
+        },
+      },
+    },
+  };
+</script>
+<link rel="stylesheet" href="/static/css/app.css" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+ <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+<link
+  href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700;800&display=swap"
+  rel="stylesheet"
+/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+<script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+{{end}}

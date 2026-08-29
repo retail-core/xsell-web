@@ -1,0 +1,21 @@
+{{define "store-switcher-rows"}}
+{{range .Stores}}
+<form hx-post="/switch-store" hx-target="body" hx-swap="none">
+    <input type="hidden" name="store_id" value="{{.ID}}" />
+    <button type="submit" class="w-full flex items-center justify-between p-3 rounded-xl {{if eq .ID $.ActiveStoreID}}bg-accent-soft{{else}}hover:bg-surface-alt{{end}} mb-1">
+        <div class="flex items-center gap-3 min-w-0">
+            <div class="w-9 h-9 rounded-lg bg-surface-alt {{if eq .ID $.ActiveStoreID}}text-accent{{else}}text-text-secondary{{end}} flex items-center justify-center shrink-0">
+                {{template "icon-location-outline"}}
+            </div>
+            <div class="text-left min-w-0">
+                <p class="text-sm font-medium text-text-primary truncate">{{.Name}}</p>
+                {{if .Address}}<p class="text-xs text-text-secondary">{{.Address}}</p>{{end}}
+            </div>
+        </div>
+        {{if eq .ID $.ActiveStoreID}}
+        <span class="text-accent shrink-0">{{template "icon-check-outline"}}</span>
+        {{end}}
+    </button>
+</form>
+{{end}}
+{{end}}

@@ -1,0 +1,10 @@
+{{define "brand-lockup"}}
+<div class="mb-8 text-center">
+    <h1 class="{{if eq .Size "lg"}}text-3xl{{else}}text-2xl{{end}} font-display font-bold">
+        <span class="text-accent">Jara</span>biz
+    </h1>
+    {{if .ShowTagline}}
+    <p class="text-text-secondary text-sm mt-1">Stop using Excel. Start using xSell.</p>
+    {{end}}
+</div>
+{{end}}

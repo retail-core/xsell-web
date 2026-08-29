@@ -1,0 +1,66 @@
+{{define "restock-sheet"}}
+<div id="restock-backdrop" onclick="closeRestockSheet()" class="hidden fixed inset-0 bg-black/50 z-50"></div>
+
+<div id="restock-sheet" class="fixed left-0 right-0 bottom-0 bg-surface border-t border-border rounded-t-2xl z-50 translate-y-full transition-transform duration-200 ease-out max-h-[92vh] flex flex-col">
+
+    <!-- Product header -->
+    <div class="flex items-start gap-3 p-4 border-b border-border shrink-0">
+        <div id="restock-product-image" class="w-14 h-14 rounded-lg bg-surface-alt border border-border overflow-hidden shrink-0"></div>
+        <div class="flex-1 min-w-0">
+            <p id="restock-product-name" class="text-sm font-medium text-text-primary line-clamp-2"></p>
+            <span id="restock-product-category" class="inline-block mt-1 text-[10px] px-2 py-0.5 rounded-full border border-accent text-accent"></span>
+        </div>
+        <button onclick="closeRestockSheet()" class="text-text-secondary shrink-0">
+            {{template "icon-close-outline"}}
+        </button>
+    </div>
+
+    <!-- Fields -->
+    <div class="p-4 space-y-3">
+        <div id="field-quantity" onclick="setActiveField('quantity')" class="restock-field border border-border rounded-xl p-3 cursor-pointer">
+            <p class="text-xs text-text-secondary mb-1">Quantity</p>
+            <div class="flex items-center justify-between">
+                <span id="value-quantity" class="text-2xl font-display font-semibold text-text-primary">0</span>
+                <div class="flex items-center gap-2">
+                    <button onclick="event.stopPropagation(); adjustQty(-1)" class="w-9 h-9 rounded-lg border border-border flex items-center justify-center text-text-secondary hover:border-accent">
+                        {{template "icon-minus-outline"}}
+                    </button>
+                    <button onclick="event.stopPropagation(); adjustQty(1)" class="w-9 h-9 rounded-lg border border-border flex items-center justify-center text-text-secondary hover:border-accent">
+                        {{template "icon-plus-outline"}}
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="field-selling" onclick="setActiveField('selling')" class="restock-field border border-border rounded-xl p-3 cursor-pointer">
+            <p class="text-xs text-text-secondary mb-1">Selling Price</p>
+            <span class="text-2xl font-display font-semibold text-text-primary">₦<span id="value-selling">0</span></span>
+        </div>
+
+        <div id="field-cost" onclick="setActiveField('cost')" class="restock-field border border-border rounded-xl p-3 cursor-pointer">
+            <p class="text-xs text-text-secondary mb-1">Cost Price</p>
+            <span class="text-2xl font-display font-semibold text-text-primary">₦<span id="value-cost">0</span></span>
+        </div>
+    </div>
+
+    <!-- Numpad -->
+    <div class="grid grid-cols-4 gap-2 p-4 pt-0 shrink-0">
+        <button onclick="numpadInput('1')" class="numkey">1</button>
+        <button onclick="numpadInput('2')" class="numkey">2</button>
+        <button onclick="numpadInput('3')" class="numkey">3</button>
+        <button onclick="numpadBackspace()" class="numkey">{{template "icon-backspace-outline"}}</button>
+
+        <button onclick="numpadInput('4')" class="numkey">4</button>
+        <button onclick="numpadInput('5')" class="numkey">5</button>
+        <button onclick="numpadInput('6')" class="numkey">6</button>
+        <button onclick="numpadInput('0')" class="numkey">0</button>
+
+        <button onclick="numpadInput('7')" class="numkey">7</button>
+        <button onclick="numpadInput('8')" class="numkey">8</button>
+        <button onclick="numpadInput('9')" class="numkey">9</button>
+        <button onclick="submitRestock()" class="bg-accent text-black rounded-xl flex items-center justify-center">
+            {{template "icon-check-outline"}}
+        </button>
+    </div>
+</div>
+{{end}}

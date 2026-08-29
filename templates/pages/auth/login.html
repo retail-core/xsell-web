@@ -1,0 +1,50 @@
+{{define "login-page"}}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Jarabiz — Login</title>
+    {{template "theme-init-script" .}}
+    {{template "head-assets" .}}
+  </head>
+  <body
+    class="bg-bg text-text-primary min-h-screen flex flex-col items-center justify-center px-2"
+  >
+    {{template "theme-toggle-btn" .}}
+    <div class="w-full max-w-sm">
+      {{template "brand-lockup" dict "Size" "lg" "ShowTagline" false}}
+      <div class="bg-surfac border dark:border-accent-soft border-accent rounded-3xl p-6">
+        <h2 class="text-xl font-display font-semibold text-text-primary mb-1">Login</h2>
+        <p class="text-sm text-text-secondary mb-6">
+          Enter your credentials to continue
+        </p>
+
+        <form hx-post="/login">
+          {{template "ui-input" dict "Label" "Email" "Type" "email" "Name"
+          "email" "Placeholder" "Enter your email" "Required" true}} {{template
+          "ui-input" dict "Label" "Password" "Type" "password" "Name" "password"
+          "Placeholder" "Enter your password" "Required" true}}
+
+          <div class="flex justify-end mb-5">
+            <a href="/forgot-password" class="text-xs text-accent font-medium"
+              >Forgot password?</a
+            >
+          </div>
+
+          {{template "ui-button" dict "Label" "Sign In" "Type" "submit"}}
+        </form>
+      </div>
+
+      <p class="text-center text-sm text-text-secondary mt-6">
+        Don't have an account?
+        <a href="/signup" class="text-accent font-medium">Create Account</a>
+      </p>
+    </div>
+
+    {{template "theme-toggle-script" .}}
+    {{template "toast-container" .}}
+    <script src="/static/js/toast.js"></script>
+  </body>
+</html>
+{{end}} 

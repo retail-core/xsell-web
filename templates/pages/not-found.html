@@ -1,0 +1,24 @@
+{{define "not-found-page"}}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Page Not Found — Jarabiz</title>
+    {{template "theme-init-script" .}}
+    {{template "head-assets" .}}
+</head>
+<body class="bg-bg text-text-primary min-h-screen flex flex-col items-center justify-center px-5 text-center">
+
+    <div class="w-16 h-16 rounded-full bg-surface-alt text-text-secondary flex items-center justify-center mb-4">
+        {{template "icon-search-outline"}}
+    </div>
+    <h1 class="text-lg font-display font-semibold text-text-primary mb-1">Page Not Found</h1>
+    <p class="text-sm text-text-secondary max-w-xs mb-6">The page you're looking for doesn't exist or may have moved.</p>
+
+    <a href="/sales" class="text-sm text-accent font-medium">Back to Dashboard</a>
+
+    {{template "theme-toggle-script" .}}
+</body>
+</html>
+{{end}}

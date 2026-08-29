@@ -1,0 +1,21 @@
+{{define "add-product-sheet"}}
+<div id="add-product-backdrop" onclick="toggleAddProductSheet()" class="hidden fixed inset-0 bg-black/50 z-50"></div>
+
+<div id="add-product-sheet" class="fixed left-0 right-0 bottom-0 bg-surface border-t border-border rounded-t-2xl z-50 translate-y-full transition-transform duration-200 ease-out">
+
+    <div class="flex items-center justify-between px-4 py-4 border-b border-border">
+        <h2 class="text-base font-semibold text-text-primary">Add Product</h2>
+        <button onclick="toggleAddProductSheet()" class="text-text-secondary">
+            {{template "icon-close-outline"}}
+        </button>
+    </div>
+
+    <div class="p-3 px-1">
+        {{template "add-product-option" dict "Icon" "form" "Title" "Add Manually" "Desc" "Enter product details yourself" "Href" "/products/new"}}
+        {{template "add-product-option" dict "Icon" "scan" "Title" "Scan Barcode" "Desc" "Add a product by scanning its barcode" "Href" "/products/scan"}}
+        {{template "add-product-option" dict "Icon" "file" "Title" "Import from File" "Desc" "Upload products from an Excel or CSV file" "Href" "/products/import-file"}}
+        {{template "add-product-option" dict "Icon" "catalog" "Title" "Import from xSell Catalog" "Desc" "Pick from thousands of ready-made products" "Href" "/products/import-catalog"}}
+    </div>
+
+</div>
+{{end}}

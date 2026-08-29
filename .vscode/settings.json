@@ -1,0 +1,15 @@
+{
+    "tailwindCSS.includeLanguages": {
+        "html": "html",
+        "go": "html"
+    },
+    "editor.formatOnSave": true,
+    "html.format.unformatted": "code, pre, em, strong",
+    "html.format.templating": true,
+    "html.format.indentInnerHtml": true,
+    "html.format.wrapLineLength": 120,
+    "[html]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.formatOnSave": true
+    }
+}

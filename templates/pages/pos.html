@@ -1,0 +1,79 @@
+{{define "pos-content"}}
+<div class="max-w-5xl mx-auto mt-3">
+  <!-- Category filter chips -->
+  <div class="fixed top-16 left-0 right-0 z-20 bg-bg pt-1 pb-3 px-2 md:hidden mt-1">
+    <div class="flex gap-2 overflow-x-auto scrollbar-none px-2">
+      {{range .Categories}}
+      <button
+        class="shrink-0 flex flex-col items-start px-4 py-2 rounded-xl border {{if .Active}}border-accent bg-accent-soft text-accent{{else}}border-border text-text-secondary hover:border-text-secondary{{end}}"
+      >
+        <span class="text-sm font-medium">{{.Name}}</span>
+        <span class="text-[11px] opacity-95">{{.Count}}</span>
+      </button>
+      {{end}}
+    </div>
+  </div>
+
+  <!-- Product grid -->
+  <div class="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 pb-24 pt-20">
+    {{range .Products}}
+    <button
+      class="text-left bg-surfac hover:border rounded-xl overflow-hidden hover:border-accent transition-colors"
+    >
+      <div
+        class="aspect-[1.45] bg-surface borde border-border rounded-2xl overflow-hidden flex items-center justify-center text-text-secondary hover:border-accen transition-colors"
+      >
+        {{if .ImageURL}}
+        <img
+          src="{{.ImageURL}}"
+          alt="{{.Name}}"
+          class="w-full h-full object-cover"
+        />
+        {{else}} {{template "icon-product-outline"}} {{end}}
+      </div>
+      <div class="p-2">
+        <p class="text-xs text-text-primary line-clamp-2 leading-tight mb-1">
+          {{.Name}}
+        </p>
+        <p class="text-sm font-semibold text-text-primary font-display">{{.Price}}</p>
+      </div>
+    </button>
+    {{end}}
+  </div>
+</div>
+
+<!-- Floating cart button -->
+<button
+  onclick="toggleCartSheet()"
+  class="fixed bottom-20 md:bottom-6 right-4 md:right-8 w-14 h-14 rounded-full bg-accent text-surface flex items-center justify-center shadow-lg z-30 shadow-accent-soft"
+>
+  {{template "icon-pos-outline"}} {{if gt .CartCount 0}}
+  <span
+    class="absolute -top-1 -right-1 bg-danger text-white text-[10px] font-semibold w-5 h-5 rounded-full flex items-center justify-center"
+    >{{.CartCount}}</span
+  >
+  {{end}}
+</button>
+
+{{template "cart-sheet" .}}
+
+<script>
+  function toggleCartSheet() {
+    const sheet = document.getElementById("cart-sheet");
+    const isOpening = sheet.classList.contains("translate-y-full");
+    sheet.classList.toggle("translate-y-full");
+    document.getElementById("cart-sheet-backdrop").classList.toggle("hidden");
+    lockBodyScroll(isOpening);
+  }
+
+  function selectPaymentMethod(method) {
+    document.querySelectorAll(".payment-tab").forEach((tab) => {
+      const active = tab.dataset.method === method;
+      tab.classList.toggle("bg-surface", active);
+      tab.classList.toggle("text-accent", active);
+      tab.classList.toggle("shadow-sm", active);
+      tab.classList.toggle("text-text-secondary", !active);
+    });
+  }
+</script>
+{{end}}

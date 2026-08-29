@@ -1,0 +1,24 @@
+{{define "mobile-menu"}}
+<div id="mobile-menu-backdrop" onclick="toggleMobileMenu()" class="hidden fixed inset-0 bg-black/50 z-40 md:hidden">
+</div>
+<div id="mobile-menu"
+    class="fixed inset-y-0 right-0 w-80 max-w-[85%] bg-surface border-l border-border z-50 transform rounded-l-2xl translate-x-full transition-transform duration-200 ease-out md:hidden">
+    <div class="flex items-center justify-between h-14 px-4 border-b border-border">
+        <span class="text-lg font-bold"><span class="text-accent">x</span>Sell</span>
+        <button onclick="toggleMobileMenu()" class="text-text-primary p-1" aria-label="Close">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+        </button>
+    </div>
+    <nav class="flex flex-col p-4 gap-1">
+        {{range .NavItems}}
+        <a href="{{.Href}}"
+            class="flex items-center gap-3 px-3 py-3 rounded-lg text-base {{if .Active}}bg-accent-soft text-accent font-medium{{else}}text-text-primary{{end}}">
+            <span class="text-lg w-6 flex justify-center">{{.Icon}}</span>{{.Label}}
+        </a>
+        {{end}}
+    </nav>
+</div>
+{{end}}

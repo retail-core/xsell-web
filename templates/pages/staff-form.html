@@ -1,0 +1,62 @@
+{{define "staff-form-page"}}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{.PageTitle}} — Jarabiz</title>
+    {{template "theme-init-script" .}}
+    {{template "head-assets" .}}
+</head>
+<body class="bg-bg text-text-primary min-h-screen">
+
+    {{template "focused-page-header" dict "Title" .PageTitle}}
+
+    <main class="pt-20 px-4 md:px-8 max-w-2xl mx-auto pb-24">
+        <form hx-post="{{if .IsEdit}}/staff/{{.Form.ID}}/edit{{else}}/staff/new{{end}}" hx-target="#staff-form-error">
+
+            {{template "ui-input" dict "Label" "Full Name" "Type" "text" "Name" "name" "Placeholder" "e.g. Garry Lukeman" "Value" .Form.Name "Required" true}}
+
+            <div class="mb-4">
+                <label class="block text-xs font-medium text-text-secondary mb-1.5">Email</label>
+                <input type="email" name="email" value="{{.Form.Email}}" placeholder="staff@example.com"
+                    {{if .IsEdit}}readonly{{else}}required{{end}}
+                    class="w-full rounded-lg px-3.5 py-2.5 text-sm border dark:border-accent-soft border-accent transition-colors placeholder:text-text-secondary/65 placeholder:text-sm focus:outline-none
+                        {{if .IsEdit}}bg-surface-alt focus:outline-none hover:border-accent text-text-secondary cursor-not-allowed{{else}}bg-bg text-text-primary focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent{{end}}" />
+                {{if .IsEdit}}
+                <p class="text-xs text-text-secondary mt-1">Email can't be changed after invite</p>
+                {{end}}
+            </div>
+
+            {{template "ui-input" dict "Label" "Role" "Type" "text" "Name" "role" "Placeholder" "e.g. Cashier" "Value" .Form.Role "Required" true}}
+
+            <div class="mb-4">
+                <label class="block text-xs font-medium text-text-secondary mb-1.5">Store Access</label>
+                <select name="store" required class="w-full bg-surface-alt border border-accent dark:border-accent-soft rounded-lg px-3.5 py-2.5 text-sm text-text-primary focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent">
+                    <option value="">Select store</option>
+                    {{$selected := .Form.Store}}
+                    {{range .Stores}}
+                    <option value="{{.}}" {{if eq . $selected}}selected{{end}}>{{.}}</option>
+                    {{end}}
+                </select>
+            </div>
+
+            <div id="staff-form-error" class="mb-3"></div>
+        </form>
+    </main>
+
+    <div class="fixed bottom-0 left-0 right-0 md:left-[72px] bg-surface border-t border-border p-4 z-30">
+        <div class="max-w-2xl mx-auto flex gap-3">
+            {{if .IsEdit}}
+            <button class="px-5 py-3 rounded-lg border border-danger/30 text-danger text-sm font-medium hover:bg-danger-soft">
+                Delete
+            </button>
+            {{end}}
+            {{template "ui-button" dict "Label" (or (and .IsEdit "Save Changes") "Send Invite") "Type" "submit" "OnClick" "document.querySelector('form').requestSubmit()"}}
+        </div>
+    </div>
+
+    {{template "theme-toggle-script" .}}
+</body>
+</html>
+{{end}}

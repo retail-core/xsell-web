@@ -1,0 +1,9 @@
+{{define "focused-page-header"}}
+<header class="fixed top-2 left-2 right-2 h-14 bg-surface border border-border rounded-3xl flex items-center justify-between px-4 z-40">
+    <button onclick="history.back()" class="flex items-center gap-1.5 text-sm text-text-secondary hover:text-text-primary">
+        {{template "icon-arrow-left-outline"}}
+    </button>
+    <h1 class="text-base font-display font-semibold text-text-primary">{{.Title}}</h1>
+    <span class="w-6"></span>
+</header>
+{{end}}

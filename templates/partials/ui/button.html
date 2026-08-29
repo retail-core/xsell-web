@@ -1,0 +1,14 @@
+{{define "ui-button"}}
+<button
+    type="{{if .Type}}{{.Type}}{{else}}button{{end}}"
+    {{if .OnClick}}onclick="{{.OnClick}}"{{end}}
+    class="w-full flex items-center justify-center gap-2 rounded-lg py-2.5 text-sm font-semibold transition-colors
+        {{if eq .Variant "secondary"}}
+        bg-surface-alt border border-border text-text-primary hover:border-accent
+        {{else}}
+        bg-accent text-black hover:bg-accent-hover
+        {{end}}"
+>
+    {{.Label}}
+</button>
+{{end}}

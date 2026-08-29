@@ -1,0 +1,63 @@
+{{define "subscription-page"}}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Subscription — Jarabiz</title>
+    {{template "theme-init-script" .}}
+    {{template "head-assets" .}}
+  </head>
+  <body class="bg-bg text-text-primary min-h-screen">
+    {{template "focused-page-header" dict "Title" "Subscription"}}
+
+    <main class="pt-20 px-4 md:px-8 max-w-md mx-auto pb-10">
+      <div class="text-center mb-6">
+        <span
+          class="inline-block text-xs font-medium bg-accent-soft text-accent px-3 py-1 rounded-full mb-3"
+        >
+          14-day free trial · 6 days left
+        </span>
+        <h1 class="text-2xl font-display font-bold text-text-primary">
+          Everything you need
+        </h1>
+        <p class="text-sm text-text-secondary mt-1">
+          One plan. No tiers. No limits.
+        </p>
+      </div>
+
+      <div class="bg-surface border border-border rounded-2xl p-6 mb-6">
+        <div class="flex items-baseline gap-1 mb-1">
+          <span class="text-4xl font-display font-bold text-text-primary"
+            >₦20,000</span
+          >
+          <span class="text-sm text-text-secondary">/ month</span>
+        </div>
+        <p class="text-xs text-text-secondary mb-6">
+          Billed monthly. Cancel anytime.
+        </p>
+
+        <div class="space-y-3 mb-6">
+          {{ range.Features }}
+          <div class="flex items-start gap-2.5">
+            <span
+              class="text-accent mt-0.5 shrink-0"
+              >{{template "icon-check-outline"}}</span
+            >
+            <span class="text-sm text-text-primary">{{.}}</span>
+          </div>
+          {{ end }}
+        </div>
+
+        {{template "ui-button" dict "Label" "Continue with Trial" "Type" "submit"}}
+      </div>
+
+      <p class="text-center text-xs text-text-secondary">
+        No card required to start your trial.
+      </p>
+    </main>
+
+    {{template "theme-toggle-script" .}}
+  </body>
+</html>
+{{ end }}

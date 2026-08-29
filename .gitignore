@@ -1,0 +1,25 @@
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# Compiled binaries
+web-service
+/bin/
+/tmp/
+
+# Go build artifacts
+*.exe
+*.test
+*.out
+
+# Dependency directories (if any local vendoring)
+vendor/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor/IDE
+.vscode/
+.i

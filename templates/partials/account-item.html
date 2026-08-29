@@ -1,0 +1,28 @@
+{{define "account-item"}}
+<a href="{{if .Href}}{{.Href}}{{else}}#{{end}}" class="flex items-center gap-3 p-4 hover:bg-surface-alt">
+    <div class="w-9 h-9 rounded-lg text-primary flex items-center justify-center shrink-0">
+        {{if eq .Icon "team"}}{{template "icon-team-outline"}}
+        {{else if eq .Icon "house"}}{{template "icon-house-outline"}}
+        {{else if eq .Icon "handcoin"}}{{template "icon-handcoin-outline"}}
+        {{else if eq .Icon "bell"}}{{template "icon-search-outline"}}
+        {{else if eq .Icon "expense"}}{{template "icon-expense-outline"}}
+        {{else if eq .Icon "barchart"}}{{template "icon-barchart-outline"}}
+        {{else if eq .Icon "sparkle"}}{{template "icon-sparkle-outline"}}
+        {{else if eq .Icon "settings"}}{{template "icon-settings-outline"}}
+        {{else if eq .Icon "creditcard"}}{{template "icon-creditcard-outline"}}
+        {{else if eq .Icon "printer"}}{{template "icon-printer-outline"}}
+        {{else if eq .Icon "scan"}}{{template "icon-scan-outline"}}
+        {{else if eq .Icon "lock"}}{{template "icon-lock-outline"}}
+        {{end}}
+    </div>
+    <div class="flex-1 min-w-0">
+        <p class="text-sm font-medium text-text-primary">{{.Title}}</p>
+        <p class="text-xs text-text-secondary truncate">{{.Desc}}</p>
+    </div>
+    {{if .Badge}}
+    <!-- <span class="text-[10px] font-medium bg-surface-alt border border-border text-text-secondary px-2 py-0.5 rounded-full">Coming Soon</span> -->
+    <span class="text-[10px] font-medium bg-danger text-white px-2 py-0.5 rounded-full shrink-0">{{.Badge}}</span>
+    {{end}}
+    <!-- <span class="text-text-secondary shrink-0">{{template "icon-chevron-right"}}</span> -->
+</a>
+{{end}}

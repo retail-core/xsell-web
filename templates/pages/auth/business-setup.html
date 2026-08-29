@@ -1,0 +1,49 @@
+{{define "business-setup-page"}}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Jarabiz — Set Up Your Business</title>
+    {{template "theme-init-script" .}}
+    {{template "head-assets" .}}
+</head>
+<body class="bg-bg text-text-primary min-h-screen flex flex-col items-center justify-center px-2 py-y">
+
+    {{template "theme-toggle-btn" .}}
+
+    <div class="w-full max-w-sm">
+        {{template "brand-lockup" dict "Size" "sm" "ShowTagline" false}}
+
+        <div class="bg-surfac border border-border rounded-2xl p-6">
+            <h2 class="text-xl font-display font-semibold text-text-primary mb-1">Set up your business</h2>
+            <p class="text-sm text-text-secondary mb-6">You can always change this later in Settings</p>
+
+            <form hx-post="/business-setup" hx-target="#business-error-box" hx-swap="innerHTML">
+
+                {{template "ui-input" dict "Label" "Business Name" "Type" "text" "Name" "business_name" "Placeholder" "e.g. Rite Foods & Resort"}}
+
+                <div id="business-error-box" class="mb-3"></div>
+
+                {{template "ui-button" dict "Label" "Continue" "Type" "submit"}}
+            </form>
+
+            <button onclick="skipBusinessSetup()" class="w-full text-center text-sm text-text-secondary font-medium mt-4 hover:text-text-primary">
+                Skip for now
+            </button>
+        </div>
+    </div>
+
+    <script>
+      function skipBusinessSetup() {
+        window.location.href = "/pos";
+      }
+    </script>
+    {{template "theme-toggle-script" .}}
+</body>
+</html>
+{{end}}
+
+{{define "business-error"}}
+<p class="text-danger text-sm">{{.Error}}</p>
+{{end}}

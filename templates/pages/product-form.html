@@ -1,0 +1,153 @@
+{{define "product-form-page"}}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+      {{if .IsEdit}}Edit Product{{else}}New Product{{end}} — Jarabiz
+    </title>
+    {{template "theme-init-script" .}} {{template "head-assets" .}}
+  </head>
+  <body class="bg-bg text-text-primary min-h-screen">
+
+    <!-- <header class="fixed top-2 left-2 right-2 h-14 bg-surface border border-border rounded-3xl flex items-center justify-between px-4 z-40">
+        <button onclick="history.back()" class="flex items-center gap-1.5 text-sm text-text-secondary hover:text-text-primary">
+            {{template "icon-arrow-left-outline"}}
+        </button>
+        <h1 class="text-base font-display font-semibold text-text-primary">
+            {{if .IsEdit}}Edit Product{{else}}New Product{{end}}
+        </h1>
+    </header> -->
+
+    {{template "focused-page-header" dict "Title" .PageTitle}}
+
+    <main class="pt-20 px-4 md:px-8 max-w-2xl mx-auto pb-24">
+
+      <form
+        hx-post="{{if .IsEdit}}/products/{{.Form.ID}}/edit{{else}}/products/new{{end}}"
+        hx-target="#form-error-box"
+      >
+        <!-- Image upload -->
+        <div class="mb-5">
+          <label class="block text-xs font-medium text-text-secondary mb-2"
+            >Product Image</label
+          >
+
+          <!-- src="{{.Form.ImageURL}}" -->
+          <div
+            class="relative w-full aspect-video bg-surface-alt border border-dashed border-border rounded-xl flex flex-col items-center justify-center gap-2 text-text-secondary overflow-hidden"
+          >
+            {{if not .Form.ImageURL}}
+            <img
+              src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRPlgO3mgTCURQB5N0_NrrLEUypENVzdmAC0sOdawqHMqDFELVCjbYxhuBI&s=10"
+              class="w-full h-full object-cover absolute inset-0"
+            />
+            {{else}} {{template "icon-search-outline"}}
+            <span class="text-xs">Tap to upload image</span>
+            {{end}}
+            <input
+              type="file"
+              accept="image/*"
+              class="absolute inset-0 opacity-0 cursor-pointer"
+            />
+          </div>
+        </div>
+
+        {{template "ui-input" dict "Label" "Item Name" "Type" "text" "Name"
+        "name" "Placeholder" "e.g. Hennessy XO Cognac 750ml" "Value" .Form.Name
+        "Required" true}}
+
+        <div class="mb-4">
+          {{template "ui-input" dict "Label" "Category" "Type" "text" "Name" "category" "Placeholder" "e.g. Snacks, Drinks" "Value" .Form.Category "Required" true}}
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          {{template "ui-input" dict "Label" "Cost Price" "Type" "number" "Name"
+          "cost_price" "Placeholder" "0" "Value" .Form.CostPrice "Required"
+          true}} {{template "ui-input" dict "Label" "Selling Price" "Type"
+          "number" "Name" "selling_price" "Placeholder" "0" "Value"
+          .Form.SellingPrice "Required" true}}
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          {{template "ui-input" dict "Label" "Quantity" "Type" "number" "Name"
+          "quantity" "Placeholder" "0" "Value" .Form.Quantity "Required" true}}
+          {{template "ui-input" dict "Label" "Reorder Alert Level" "Type"
+          "number" "Name" "reorder_level" "Placeholder" "0" "Value"
+          .Form.ReorderLevel "Required" true}}
+        </div>
+
+        <!-- Barcode with scan -->
+        <div class="mb-4">
+          <label class="block text-xs font-medium text-text-secondary mb-1.5"
+            >Barcode</label
+          >
+          <div class="relative">
+            <input
+              type="text"
+              name="barcode"
+              value="{{.Form.Barcode}}"
+              placeholder="Scan or enter manually"
+              class="w-full bg-surface-alt border border-border rounded-lg pl-3.5 pr-11 py-3 text-sm text-text-primary placeholder:text-text-secondary/60 focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent"
+            />
+            <button
+              type="button"
+              onclick="openBarcodeScanner()"
+              class="absolute right-3 top-1/2 -translate-y-1/2 text-text-secondary hover:text-accent"
+            >
+              {{template "icon-scan-outline"}}
+            </button>
+          </div>
+        </div>
+
+        <!-- Status toggle -->
+        <div
+          class="flex items-center justify-between bg-surface border border-border rounded-xl p-3.5 mb-6"
+        >
+          <div>
+            <p class="text-sm font-medium text-text-primary">Active</p>
+            <p class="text-xs text-text-secondary">Visible for sale in POS</p>
+          </div>
+          <button
+            type="button"
+            onclick="toggleFormSwitch(this)"
+            data-on="{{if .Form.IsActive}}true{{else}}false{{end}}"
+            class="relative w-11 h-6 rounded-full {{if .Form.IsActive}}bg-accent{{else}}bg-border{{end}} transition-colors shrink-0"
+          >
+            <span
+              class="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform {{if .Form.IsActive}}translate-x-5{{else}}translate-x-0.5{{end}}"
+            ></span>
+          </button>
+          <input
+            type="hidden"
+            name="is_active"
+            id="is_active_input"
+            value="{{.Form.IsActive}}"
+          />
+        </div>
+
+        <div id="form-error-box" class="mb-3"></div>
+      </form>
+    </main>
+
+    <!-- Fixed bottom save bar -->
+    <div
+      class="fixed bottom-0 left-0 right-0 md:left-[72px] bg-surface border-t border-border p-4 z-30"
+    >
+      <div class="max-w-2xl mx-auto flex gap-3">
+        {{if .IsEdit}}
+        <button
+          class="px-5 py-3 rounded-lg border border-danger/30 text-danger text-sm font-medium hover:bg-danger-soft"
+        >
+          Delete
+        </button>
+        {{end}} {{template "ui-button" dict "Label" "Save Product" "Type"
+        "submit" "OnClick" "document.querySelector('form').requestSubmit()"}}
+      </div>
+    </div>
+
+    <script src="/static/js/product-form.js"></script>
+  </body>
+</html>
+{{end}}

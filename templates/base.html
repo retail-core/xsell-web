@@ -1,0 +1,46 @@
+{{define "base"}}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Jarabiz</title>
+    {{template "theme-init-script" .}}
+    {{template "head-assets" .}}
+  </head>
+
+  <body class="bg-bg text-text-primary min-h-screen">
+    {{template "sidebar" .}} {{template "mobile-topbar" .}} {{template
+    "mobile-menu" .}}
+
+    <main class="md:ml-[72px] pt-14 md:pt-0 pb-20 md:pb-0 px-3 md:px-8 py-6">
+      {{if eq .ContentTemplate "pos-content"}}{{template "pos-content" .}}
+      {{else if eq .ContentTemplate "account-content"}}{{template
+      "account-content" .}} {{else if eq .ContentTemplate
+      "products-content"}}{{template "products-content" .}} {{else if eq
+      .ContentTemplate "sales-content"}}{{template "sales-content" .}}
+      {{else if eq .ContentTemplate "account-content"}}{{template
+      "account-content" .}} {{end}}
+    </main>
+
+    {{template "bottom-nav" .}}
+
+    <script>
+      function toggleMobileMenu() {
+        document
+          .getElementById("mobile-menu")
+          .classList.toggle("translate-x-full");
+        document
+          .getElementById("mobile-menu-backdrop")
+          .classList.toggle("hidden");
+      }
+
+      function lockBodyScroll(lock) {
+        document.documentElement.style.overflow = lock ? "hidden" : "";
+        document.body.style.overflow = lock ? "hidden" : "";
+        document.body.style.touchAction = lock ? "none" : "";
+      }
+    </script>
+  </body>
+</html>
+{{end}} {{define "content"}}{{end}}

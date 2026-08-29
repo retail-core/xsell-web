@@ -1,0 +1,23 @@
+{{define "product-menu"}}
+<div class="relative inline-block">
+    <button onclick="toggleProductMenu(this)" class="text-text-secondary hover:text-text-primary p-1.5 -m-1.5">
+        {{template "icon-3dot-solid"}}
+    </button>
+
+    <div class="product-menu-popover hidden absolute right-0 top-full gap-2 mt-1 w-44 bg-surface border border-border rounded-xl shadow-lg py- z-30">
+        <button onclick="openRestockSheet('{{.Name}}', '{{.Category}}', '{{.ImageURL}}', {{.StockCount}}, 1245, 900)" class="w-full flex items-center gap-2 px-3 py-3 text-sm text-text-primary hover:bg-surface-alt text-left">
+            {{template "icon-plus-outline"}}
+            Restock
+        </button>
+        <button class="w-full flex items-center gap-2 px-3 py-3 text-sm text-text-primary hover:bg-surface-alt text-left">
+            {{template "icon-eyeslash-outline"}}
+            Deactivate
+        </button>
+        <div class="border-t border-border my-1"></div>
+        <button class="w-full flex items-center gap-2 px-3 py-3 text-sm text-danger hover:bg-danger-soft text-left">
+            {{template "icon-trash-outline"}}
+            Delete
+        </button>
+    </div>
+</div>
+{{end}}

@@ -1,0 +1,16 @@
+{{define "theme-init-script"}}
+<script>
+  if (localStorage.getItem('xsell-theme') === 'dark') {
+    document.documentElement.classList.add('dark');
+  }
+</script>
+{{end}}
+
+{{define "theme-toggle-script"}}
+<script>
+  function toggleTheme() {
+    document.documentElement.classList.toggle('dark');
+    localStorage.setItem('xsell-theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+  }
+</script>
+{{end}}
