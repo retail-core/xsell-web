@@ -1,65 +1,16 @@
 package handlers
 
 import (
+	"encoding/json"
+	"fmt"
 	"net/http"
+	"sort"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/retail-core/xsell-web/internal/clients"
+	"github.com/retail-core/xsell-web/internal/middleware"
+	"github.com/retail-core/xsell-web/internal/session"
 )
-
-type ProductRow struct {
-	ID, Name, Category, Price, ImageURL string
-	StockCount                          int
-	StockLabel                          string // "24 items", "0 items"
-	LowStock                            bool   // drives amber/red styling
-}
-
-func getProductsData() map[string]any {
-	categories := []Category{
-		{"All", "589 items", true},
-		{"Spirit & Liquors", "201 items", false},
-		{"Beer", "93 items", false},
-		{"Wine", "322 items", false},
-		{"Drinks", "376 items", false},
-	}
-	products := []ProductRow{
-		{ID: "p-1", Name: "44cl Nuts Cashew Lion Baked 100g", Category: "Snacks", Price: "₦1,200", ImageURL: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRPlgO3mgTCURQB5N0_NrrLEUypENVzdmAC0sOdawqHMqDFELVCjbYxhuBI&s=10", StockCount: 33, StockLabel: "33 in stock", LowStock: false},
-		{ID: "p-2", Name: "Energy Drink Regular 250ml", Category: "Drinks", Price: "₦9,000", ImageURL: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS-0oT8tYOMTx0nqNOIUwpxTyoBuVfqr_QC0j2EjlhRMw&s=10", StockCount: 33, StockLabel: "6 in stock", LowStock: false},
-		{ID: "p-3", Name: "Chocolate Mini Snickers", Category: "Personal Care", Price: "₦2,000", ImageURL: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTCJpLvI8W0zoZcmXOpztZ2oHV2icIO_7aLytsEaZrn3w&s", StockCount: 5, StockLabel: "6 in stock", LowStock: true},
-		{ID: "p-4", Name: "Noodles Indomie Chicken", Category: "Groceries", Price: "₦400", ImageURL: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQaNn_MHV0VelIG728ClSQiNinBllBEuetCY61Btb6WUg&s=10", StockCount: 33, StockLabel: "6 in stock", LowStock: false},
-		{ID: "p-5", Name: "Chips Pringles 165g", Category: "Noodles", Price: "₦1,600", ImageURL: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTFgCeJx0XUKF3TfkcTxPW9Vo3-aZywwR2Uhx6qoLBrJlHLupC_hRMvdOu-&s=10", StockCount: 33, StockLabel: "0 in stock", LowStock: true},
-		{ID: "p-6", Name: "Noodles Chicken Honey", Category: "Milk", Price: "₦450", ImageURL: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTZRKlJIUNKnVS0z5hk40ZQXnsVXdCpvIpLoVCPFDYHXygr1mxb6kpTMM4&s=10", StockCount: 33, StockLabel: "6 in stock", LowStock: false},
-		{ID: "p-7", Name: "Cooking Oil Vegetable 1L", Category: "Detergent", Price: "₦9,000", ImageURL: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRluxYA9GMH2lDN4UUmy0zWsQWcS9YeyBXCCch6sdo58q4HagoeDIKVY_g&s=10", StockCount: 33, StockLabel: "6 in stock", LowStock: false},
-		{ID: "p-8", Name: "44cl Nuts Cashew Lion Baked 100g", Category: "Snacks", Price: "₦1,200", ImageURL: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRPlgO3mgTCURQB5N0_NrrLEUypENVzdmAC0sOdawqHMqDFELVCjbYxhuBI&s=10", StockCount: 33, StockLabel: "33 in stock", LowStock: false},
-		{ID: "p-9", Name: "Energy Drink Regular 250ml", Category: "Drinks", Price: "₦9,000", ImageURL: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS-0oT8tYOMTx0nqNOIUwpxTyoBuVfqr_QC0j2EjlhRMw&s=10", StockCount: 33, StockLabel: "6 in stock", LowStock: false},
-		{ID: "p-10", Name: "Chocolate Mini Snickers", Category: "Personal Care", Price: "₦2,000", ImageURL: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTCJpLvI8W0zoZcmXOpztZ2oHV2icIO_7aLytsEaZrn3w&s", StockCount: 5, StockLabel: "6 in stock", LowStock: true},
-		{ID: "p-11", Name: "Noodles Indomie Chicken", Category: "Groceries", Price: "₦400", ImageURL: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQaNn_MHV0VelIG728ClSQiNinBllBEuetCY61Btb6WUg&s=10", StockCount: 33, StockLabel: "6 in stock", LowStock: false},
-		{ID: "p-12", Name: "Chips Pringles 165g", Category: "Noodles", Price: "₦1,600", ImageURL: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTFgCeJx0XUKF3TfkcTxPW9Vo3-aZywwR2Uhx6qoLBrJlHLupC_hRMvdOu-&s=10", StockCount: 33, StockLabel: "0 in stock", LowStock: true},
-		{ID: "p-13", Name: "Noodles Chicken Honey", Category: "Milk", Price: "₦450", ImageURL: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTZRKlJIUNKnVS0z5hk40ZQXnsVXdCpvIpLoVCPFDYHXygr1mxb6kpTMM4&s=10", StockCount: 33, StockLabel: "6 in stock", LowStock: false},
-		{ID: "p-14", Name: "Cooking Oil Vegetable 1L", Category: "Detergent", Price: "₦9,000", ImageURL: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRluxYA9GMH2lDN4UUmy0zWsQWcS9YeyBXCCch6sdo58q4HagoeDIKVY_g&s=10", StockCount: 33, StockLabel: "6 in stock", LowStock: false},
-		{ID: "p-15", Name: "Croissant Maxi 15 Pack", Category: "Spices & Seasonings", Price: "₦500", ImageURL: "https://vegetalfoods.com/wp-content/uploads/2021/04/4P8A0760.jpg", StockCount: 33, StockLabel: "6 in stock", LowStock: false},
-		{ID: "p-16", Name: "44cl Nuts Cashew Lion Baked 100g", Category: "Snacks", Price: "₦1,200", ImageURL: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRPlgO3mgTCURQB5N0_NrrLEUypENVzdmAC0sOdawqHMqDFELVCjbYxhuBI&s=10", StockCount: 33, StockLabel: "33 in stock", LowStock: false},
-		{ID: "p-17", Name: "Energy Drink Regular 250ml", Category: "Drinks", Price: "₦9,000", ImageURL: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS-0oT8tYOMTx0nqNOIUwpxTyoBuVfqr_QC0j2EjlhRMw&s=10", StockCount: 33, StockLabel: "6 in stock", LowStock: false},
-		{ID: "p-18", Name: "Chocolate Mini Snickers", Category: "Personal Care", Price: "₦2,000", ImageURL: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTCJpLvI8W0zoZcmXOpztZ2oHV2icIO_7aLytsEaZrn3w&s", StockCount: 5, StockLabel: "6 in stock", LowStock: true},
-		{ID: "p-19", Name: "Noodles Indomie Chicken", Category: "Groceries", Price: "₦400", ImageURL: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQaNn_MHV0VelIG728ClSQiNinBllBEuetCY61Btb6WUg&s=10", StockCount: 33, StockLabel: "6 in stock", LowStock: false},
-		{ID: "p-20", Name: "Chips Pringles 165g", Category: "Noodles", Price: "₦1,600", ImageURL: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTFgCeJx0XUKF3TfkcTxPW9Vo3-aZywwR2Uhx6qoLBrJlHLupC_hRMvdOu-&s=10", StockCount: 33, StockLabel: "0 in stock", LowStock: true},
-		{ID: "p-21", Name: "Noodles Chicken Honey", Category: "Milk", Price: "₦450", ImageURL: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTZRKlJIUNKnVS0z5hk40ZQXnsVXdCpvIpLoVCPFDYHXygr1mxb6kpTMM4&s=10", StockCount: 33, StockLabel: "6 in stock", LowStock: false},
-		{ID: "p-22", Name: "Cooking Oil Vegetable 1L", Category: "Detergent", Price: "₦9,000", ImageURL: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRluxYA9GMH2lDN4UUmy0zWsQWcS9YeyBXCCch6sdo58q4HagoeDIKVY_g&s=10", StockCount: 33, StockLabel: "6 in stock", LowStock: false},
-		{ID: "p-23", Name: "Croissant Maxi 15 Pack", Category: "Spices & Seasonings", Price: "₦500", ImageURL: "https://vegetalfoods.com/wp-content/uploads/2021/04/4P8A0760.jpg", StockCount: 33, StockLabel: "6 in stock", LowStock: false},
-		{ID: "p-24", Name: "Croissant Maxi 15 Pack", Category: "Spices & Seasonings", Price: "₦500", ImageURL: "https://vegetalfoods.com/wp-content/uploads/2021/04/4P8A0760.jpg", StockCount: 33, StockLabel: "6 in stock", LowStock: false},
-	}
-	return map[string]any{
-		"Categories":      categories,
-		"Products":        products,
-		"ContentTemplate": "products-content",
-	}
-}
-
-func (h *InventoryHandler) Products(w http.ResponseWriter, r *http.Request) {
-	h.renderShell(w, "products", "Products",
-		[]HeaderAction{{Icon: "search", OnClick: "toggleSearch()"}},
-		getProductsData(),
-	)
-}
 
 type ProductForm struct {
 	ID, Name, Category, CostPrice, SellingPrice, Barcode string
@@ -68,32 +19,251 @@ type ProductForm struct {
 	IsActive                                             bool
 }
 
-func getProductForm(id string) ProductForm {
-	// hardcoded for now — real fetch from inventory-service later
-	if id == "" {
-		return ProductForm{IsActive: true}
-	}
-	return ProductForm{
-		ID: id, Name: "Hennessy XO Cognac 750ml", Category: "Spirit & Liquors",
-		CostPrice: "56000", SellingPrice: "67000", Barcode: "1289612391292",
-		Quantity: 24, ReorderLevel: 5, ImageURL: "", IsActive: true,
-	}
-}
-
-func (h (*InventoryHandler))  ProductFormPage(w http.ResponseWriter, r *http.Request) {
+func (h *InventoryHandler) ProductFormPage(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
-	form := getProductForm(id)
 	isEdit := id != ""
+	token := middleware.GetToken(r)
+	activeStore, _ := session.GetActiveStore(r)
+
+	var form ProductForm
+	if isEdit {
+		items, err := h.InventoryClient.GetInventory(activeStore.ID, token) // same call as list page
+		if err != nil {
+			h.Log.Error("failed to fetch inventory", "error", err)
+			w.Header().Set("X-Toast-Message", "Could not load product")
+			http.Redirect(w, r, "/products", http.StatusSeeOther)
+			return
+		}
+
+		var found *clients.InventoryItem
+		for _, item := range items {
+			if item.ID == id {
+				found = &item
+				break
+			}
+		}
+		if found == nil {
+			w.Header().Set("X-Toast-Message", "Product not found")
+			http.Redirect(w, r, "/products", http.StatusSeeOther)
+			return
+		}
+		form = mapInventoryToForm(found)
+	}
 
 	var title = "New Product"
 	if isEdit {
 		title = "Edit Product"
 	}
 
-	h.Tmpl.ExecuteTemplate(w, "product-form-page", map[string]any{
+	err := h.Tmpl.ExecuteTemplate(w, "product-form-page", map[string]any{
 		"Form":       form,
 		"IsEdit":     isEdit,
-		"Categories": []string{"Spirit & Liquors", "Beer", "Wine", "Snacks", "Drinks", "Groceries"},
-		"PageTitle": title,
+		"PageTitle":  title,
 	})
+
+	if err != nil {
+		h.Log.Error("error loading page", "error", err)
+		http.Error(w, "internal error", http.StatusInternalServerError)
+	}
+}
+
+func (h *InventoryHandler) Products(w http.ResponseWriter, r *http.Request) {
+	token := middleware.GetToken(r)
+	activeStore, _ := session.GetActiveStore(r)
+	role := middleware.GetRole(r)
+
+	if activeStore == nil {
+		w.Header().Set("X-Toast-Message", "No active store selected")
+		http.Redirect(w, r, "/account", http.StatusSeeOther)
+		return
+	}
+
+	items, err := h.InventoryClient.GetInventory(activeStore.ID, token)
+	if err != nil {
+		h.Log.Error("failed to fetch inventory", "store_id", activeStore.ID, "error", err)
+		h.renderShell(w, r, "products", "Inventory", nil, map[string]any{
+			"ContentTemplate": "products-content",
+			"LoadError":       true,
+		})
+		return
+	}
+
+	categories := buildCategoryChips(items)
+	rows := buildProductRows(items)
+
+	h.renderShell(w, r, "products", "Inventory",
+		[]HeaderAction{{Icon: "search", OnClick: "openPageSearch()"}},
+		map[string]any{
+			"ContentTemplate": "products-content",
+			"Categories":      categories,
+			"Products":        rows,
+			"IsOwner":         role == "business_owner",
+		},
+	)
+}
+
+type CategoryChip struct {
+	Name   string
+	Count  int
+	Active bool
+}
+
+func buildCategoryChips(items []clients.InventoryItem) []CategoryChip {
+	counts := map[string]int{}
+	for _, item := range items {
+		cat := "Uncategorized"
+		if item.Category != nil && *item.Category != "" {
+			cat = *item.Category
+		}
+		counts[cat]++
+	}
+
+	chips := []CategoryChip{{Name: "All", Count: len(items), Active: true}}
+
+	names := make([]string, 0, len(counts))
+	for name := range counts {
+		names = append(names, name)
+	}
+	sort.Strings(names)
+
+	for _, name := range names {
+		chips = append(chips, CategoryChip{Name: name, Count: counts[name]})
+	}
+	return chips
+}
+
+type ProductRow struct {
+	ID, Name, Category, Price, ImageURL string
+	StockCount                          int
+	StockLabel                          string
+	LowStock                            bool
+	SellingPriceRaw, CostPriceRaw       float64
+}
+
+func buildProductRows(items []clients.InventoryItem) []ProductRow {
+	rows := make([]ProductRow, 0, len(items))
+	for _, item := range items {
+		name := "Unnamed Product"
+		if item.Name != nil {
+			name = *item.Name
+		}
+		category := "Uncategorized"
+		if item.Category != nil {
+			category = *item.Category
+		}
+		imageURL := ""
+		if item.ImageUrl != nil {
+			imageURL = *item.ImageUrl
+		}
+
+		lowStock := false
+		if item.MinThreshold != nil && item.TotalQty <= *item.MinThreshold {
+			lowStock = true
+		}
+
+		costPrice := 0.0
+		if item.CostPrice != nil {
+			costPrice = *item.CostPrice
+		}
+
+		rows = append(rows, ProductRow{
+			ID:              item.ID,
+			Name:            name,
+			Category:        category,
+			Price:           formatNaira(item.SellingPrice),
+			ImageURL:        imageURL,
+			StockCount:      item.TotalQty,
+			StockLabel:      fmt.Sprintf("%d in stock", item.TotalQty),
+			LowStock:        lowStock,
+			SellingPriceRaw: item.SellingPrice,
+			CostPriceRaw:    costPrice,
+		})
+	}
+	return rows
+}
+
+func formatNaira(amount float64) string {
+	return fmt.Sprintf("₦%s", humanizeNumber(amount))
+}
+
+func (h *InventoryHandler) RestockSubmit(w http.ResponseWriter, r *http.Request) {
+	token := middleware.GetToken(r)
+	activeStore, _ := session.GetActiveStore(r)
+	inventoryID := chi.URLParam(r, "id")
+
+	var body struct {
+		Quantity     int     `json:"quantity"`
+		SellingPrice float64 `json:"selling_price"`
+		CostPrice    float64 `json:"cost_price"`
+	}
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		http.Error(w, "invalid request", http.StatusBadRequest)
+		return
+	}
+
+	req := clients.RestockRequest{
+		Quantity:     body.Quantity,
+		SellingPrice: body.SellingPrice,
+		CostPrice:    &body.CostPrice,
+		Type:         "set",
+	}
+
+	if err := h.InventoryClient.Restock(activeStore.ID, inventoryID, token, req); err != nil {
+		h.Log.Error("restock failed", "inventory_id", inventoryID, "error", err)
+		w.Header().Set("X-Toast-Message", "Could not update stock")
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("X-Toast-Message", "Stock updated")
+	w.WriteHeader(http.StatusOK)
+}
+
+func (h *InventoryHandler) DeleteProduct(w http.ResponseWriter, r *http.Request) {
+	token := middleware.GetToken(r)
+	activeStore, _ := session.GetActiveStore(r)
+	inventoryID := chi.URLParam(r, "id")
+
+	if err := h.InventoryClient.DeleteInventory(activeStore.ID, inventoryID, token); err != nil {
+		h.Log.Error("delete inventory failed", "inventory_id", inventoryID, "error", err)
+		w.Header().Set("X-Toast-Message", "Could not delete product")
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("X-Toast-Message", "Product deleted")
+	w.WriteHeader(http.StatusOK)
+}
+
+func mapInventoryToForm(item *clients.InventoryItem) ProductForm {
+	name, category, barcode, imageURL := "", "", "", ""
+	if item.Name != nil {
+		name = *item.Name
+	}
+	if item.Category != nil {
+		category = *item.Category
+	}
+	if item.Barcode != nil {
+		barcode = *item.Barcode
+	}
+	if item.ImageUrl != nil {
+		imageURL = *item.ImageUrl
+	}
+
+	costPrice := 0.0
+	if item.CostPrice != nil {
+		costPrice = *item.CostPrice
+	}
+
+	return ProductForm{
+		ID:           item.ID,
+		Name:         name,
+		Category:     category,
+		Barcode:      barcode,
+		ImageURL:     imageURL,
+		CostPrice:    fmt.Sprintf("%.2f", costPrice),
+		SellingPrice: fmt.Sprintf("%.2f", item.SellingPrice),
+		Quantity:     item.TotalQty,
+		IsActive:     item.IsActive,
+	}
 }

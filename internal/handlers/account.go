@@ -18,7 +18,7 @@ func (h *AccountHandler) Account(w http.ResponseWriter, r *http.Request) {
 	activeStore, _ := session.GetActiveStore(r)
 	role := m_middleware.GetRole(r)
 
-	h.renderShell(w, "account", "Account", []HeaderAction{
+	h.renderShell(w, r, "account", "Account", []HeaderAction{
 		{Icon: "theme", OnClick: "toggleTheme()"},
 		{Icon: "bell", OnClick: ""},
 	}, map[string]any{

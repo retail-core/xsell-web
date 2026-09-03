@@ -1,4 +1,15 @@
 {
+    "workbench.colorTheme": "Clion Theme Perfected",
+    "editor.fontFamily": "'Fira Code', monospace",
+    "editor.fontLigatures": true,
+    "files.autoSave": "afterDelay",
+
+    // mine added
+    "editor.lineDecorationsWidth": 60,
+    "editor.fontSize": 16,
+    "editor.lineHeight": 24,
+    "editor.letterSpacing": 0.5,
+    "editor.suggestOnTriggerCharacters": true,
     "tailwindCSS.includeLanguages": {
         "html": "html",
         "go": "html"
@@ -8,8 +19,13 @@
     "html.format.templating": true,
     "html.format.indentInnerHtml": true,
     "html.format.wrapLineLength": 120,
+
     "[html]": {
-        "editor.defaultFormatter": "esbenp.prettier-vscode",
-        "editor.formatOnSave": true
-    }
+        "editor.defaultFormatter": "monosans.djlint",
+        "editor.formatOnSave": true,
+        "editor.tabSize": 2
+    },
+    
+    "djlint.enableLinting": true,
+    "djlint.useGitignore": true
 }

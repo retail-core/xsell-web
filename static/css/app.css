@@ -86,3 +86,7 @@ body {
   border-color: var(--color-accent);
   background-color: var(--color-accent-soft);
 }
+
+/* app.css */
+.htmx-indicator { opacity: 0; transition: opacity 200ms ease; }
+.htmx-request .htmx-indicator, .htmx-request.htmx-indicator { opacity: 1; }

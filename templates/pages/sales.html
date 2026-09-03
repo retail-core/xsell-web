@@ -1,5 +1,18 @@
 {{define "sales-content"}}
 <div class="max-w-3xl mx-auto mt-3">
+    {{if .LoadError}}
+    <div class="flex flex-col items-center justify-center py-16 text-center">
+        <p class="text-sm text-text-secondary">Couldn't load your sales. Pull down to retry.</p>
+    </div>
+    {{else if not .Groups}}
+    <div class="flex flex-col items-center justify-center py-20 text-center px-6">
+        <div class="w-16 h-16 rounded-full bg-surface-alt text-text-secondary flex items-center justify-center mb-4">
+            {{template "icon-sale-outline"}}
+        </div>
+        <h3 class="text-base font-display font-semibold text-text-primary mb-1">No sales yet</h3>
+        <p class="text-sm text-text-secondary">Your completed sales will show up here.</p>
+    </div>
+    {{else}}
 
     <!-- Top summary card -->
     <a href="/reports" class="block bg-surface border dark:border-accent-soft border-accent rounded-2xl p-4 mb-4 hover:border-accent transition-colors">
@@ -33,7 +46,7 @@
                 <div class="text-left">
                     <div class="flex items-center gap-2">
                         <span class="text-base font-display font-semibold text-text-primary">{{$group.Label}}</span>
-                        <span id="group-chevron-{{$index}}" class="text-text-secondary transition-transform">{{template "icon-chevron-down"}}</span>
+                        <span id="group-chevron-{{$index}}" class="text-text-secondary transition-transform {{if ne $index 0}}rotate-180{{end}}">{{template "icon-chevron-down"}}</span>
                     </div>
                     <p class="text-xs text-text-secondary mt-0.5">{{$group.OrderCount}} Orders · {{$group.Total}}</p>
                 </div>
@@ -42,25 +55,10 @@
                 </span>
             </button>
 
-            <div id="group-body-{{$index}}" class="divide-y divide-border border-t border-border">
+            <div id="group-body-{{$index}}" class="divide-y divide-border border-t border-border {{if ne $index 0}}hidden{{end}}">
                 {{range $group.Orders}}
                 <div 
-                        onclick='openOrderDetail({
-                        orderId: "#233EFNI41",
-                        soldBy: "{{.StaffName}}",
-                        dateTime: "{{.Time}}",
-                        subtotal: "{{.Amount}}",
-                        paymentMethod: "{{.PaymentMethod}}",
-                        status: "Paid",
-                        items: [
-                                {name: "Beef Crowich", qty: 3, unitPrice: "₦7,817", lineTotal: "{{.Amount}}"},
-                                 {name: "Biscuit Pack", qty: 2, unitPrice: "₦500", lineTotal: "₦1,000"},
-                                {name: "Blue Pen", qty: 5, unitPrice: "₦100", lineTotal: "₦500"},
-                                {name: "A4 Paper Ream", qty: 1, unitPrice: "₦3,200", lineTotal: "₦3,200"}
-                        ],
-                        creditToName: ""
-                    })'
-                
+                    onclick='openOrderDetail("{{.ID}}")'
                     class="flex items-center justify-between px-4 py-3">
                     <div>
                         <p class="text-sm text-text-primary">POS by {{.StaffName}}</p>
@@ -78,64 +76,9 @@
         </div>
         {{end}}
     </div>
-
 </div>
-
-<script>
-  function toggleSalesGroup(idx) {
-    const body = document.getElementById('group-body-' + idx);
-    const chevron = document.getElementById('group-chevron-' + idx);
-    body.classList.toggle('hidden');
-    chevron.classList.toggle('rotate-180');
-  }
-</script>
-
-<script>
-  function openOrderDetail(order) {
-    document.getElementById('order-id').textContent = 'Order ' + order.orderId;
-    document.getElementById('order-sold-by').textContent = 'Sold by ' + order.soldBy;
-    document.getElementById('order-datetime').textContent = order.dateTime;
-    document.getElementById('order-subtotal').textContent = order.subtotal;
-
-    const isCash = order.paymentMethod === 'Cash';
-    document.getElementById('order-payment-badge').innerHTML =
-      `<span class="text-xs px-2.5 py-1 rounded-full border ${isCash ? 'border-accent text-accent' : 'border-border text-text-secondary'}">${order.paymentMethod}</span>`;
-
-    const isCredit = order.status === 'Credit';
-    document.getElementById('order-status-badge').innerHTML =
-      `<span class="text-xs px-2.5 py-1 rounded-full ${isCredit ? 'bg-danger-soft text-danger' : 'bg-accent-soft text-accent'}">${order.status}</span>`;
-
-    document.getElementById('order-items').innerHTML = order.items.map(item => `
-      <div class="flex items-center gap-3">
-        <div class="w-11 h-11 rounded-lg bg-surface-alt border border-border shrink-0"></div>
-        <div class="flex-1 min-w-0">
-          <p class="text-sm text-text-primary">${item.name}</p>
-          <p class="text-xs text-text-secondary">Qty ${item.qty} · ${item.unitPrice} each</p>
-        </div>
-        <span class="text-sm font-display font-semibold text-text-primary">${item.lineTotal}</span>
-      </div>
-    `).join('');
-
-    const creditSection = document.getElementById('order-credit-section');
-    if (isCredit) {
-      creditSection.classList.remove('hidden');
-      document.getElementById('order-credit-name').textContent = order.creditToName;
-      document.getElementById('order-credit-avatar').textContent = order.creditToName.split(' ').map(n => n[0]).join('').slice(0, 2);
-    } else {
-      creditSection.classList.add('hidden');
-    }
-
-    document.getElementById('order-sheet').classList.remove('translate-y-full');
-    document.getElementById('order-backdrop').classList.remove('hidden');
-    lockBodyScroll(true);
-  }
-
-  function closeOrderDetail() {
-    document.getElementById('order-sheet').classList.add('translate-y-full');
-    document.getElementById('order-backdrop').classList.add('hidden');
-    lockBodyScroll(false);
-  }
-</script>
-
 {{template "order-detail-sheet" .}}
+<script src="/static/js/sales.js"></script>
+
+{{end}}
 {{end}}

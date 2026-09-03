@@ -45,19 +45,19 @@
 
     <!-- Numpad -->
     <div class="grid grid-cols-4 gap-2 p-4 pt-0 shrink-0">
-        <button onclick="numpadInput('1')" class="numkey">1</button>
-        <button onclick="numpadInput('2')" class="numkey">2</button>
-        <button onclick="numpadInput('3')" class="numkey">3</button>
-        <button onclick="numpadBackspace()" class="numkey">{{template "icon-backspace-outline"}}</button>
+        <button onclick="tapFeedback(); numpadInput('1')" class="numkey">1</button>
+        <button onclick="tapFeedback(); numpadInput('2')" class="numkey">2</button>
+        <button onclick="tapFeedback(); numpadInput('3')" class="numkey">3</button>
+        <button onclick="tapFeedback(); numpadBackspace()" class="numkey">{{template "icon-backspace-outline"}}</button>
 
-        <button onclick="numpadInput('4')" class="numkey">4</button>
-        <button onclick="numpadInput('5')" class="numkey">5</button>
-        <button onclick="numpadInput('6')" class="numkey">6</button>
-        <button onclick="numpadInput('0')" class="numkey">0</button>
+        <button onclick="tapFeedback(); numpadInput('4')" class="numkey">4</button>
+        <button onclick="tapFeedback(); numpadInput('5')" class="numkey">5</button>
+        <button onclick="tapFeedback(); numpadInput('6')" class="numkey">6</button>
+        <button onclick="tapFeedback(); numpadInput('0')" class="numkey">0</button>
 
-        <button onclick="numpadInput('7')" class="numkey">7</button>
-        <button onclick="numpadInput('8')" class="numkey">8</button>
-        <button onclick="numpadInput('9')" class="numkey">9</button>
+        <button onclick="tapFeedback(); numpadInput('7')" class="numkey">7</button>
+        <button onclick="tapFeedback(); numpadInput('8')" class="numkey">8</button>
+        <button onclick="tapFeedback(); numpadInput('9')" class="numkey">9</button>
         <button onclick="submitRestock()" class="bg-accent text-black rounded-xl flex items-center justify-center">
             {{template "icon-check-outline"}}
         </button>

@@ -15,6 +15,10 @@ func Load() (*template.Template, error) {
 			}
 			return d
 		},
+
+		"js": func(s string) template.JS {
+			return template.JS(s)
+		},
 	})
 
 	var files []string

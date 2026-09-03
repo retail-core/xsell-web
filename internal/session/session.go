@@ -11,6 +11,22 @@ import (
 const cookieName = "jarabiz_session"
 const storeIDCookieName = "jarabiz_active_store"
 const activeStoreCookieName = "jarabiz_active_store"
+const userNameCookieName = "jarabiz_user_name"
+
+func SetUserName(w http.ResponseWriter, name string) {
+	http.SetCookie(w, &http.Cookie{
+		Name: userNameCookieName, Value: name, Path: "/",
+		HttpOnly: true, SameSite: http.SameSiteLaxMode, MaxAge: 60 * 60 * 24 * 7,
+	})
+}
+
+func GetUserName(r *http.Request) string {
+	cookie, err := r.Cookie(userNameCookieName)
+	if err != nil {
+		return ""
+	}
+	return cookie.Value
+}
 
 func SetToken(w http.ResponseWriter, token string) {
 	http.SetCookie(w, &http.Cookie{

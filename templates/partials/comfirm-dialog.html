@@ -1,0 +1,18 @@
+{{define "confirm-dialog"}}
+<div id="confirm-backdrop" onclick="closeConfirmDialog()" class="hidden fixed inset-0 bg-black/50 z-[90]"></div>
+
+<div id="confirm-dialog" class="hidden fixed inset-0 z-[90] flex items-center justify-center px-6">
+    <div class="bg-surface border border-border rounded-2xl p-5 w-full max-w-xs">
+        <h3 id="confirm-title" class="text-base font-display font-semibold text-text-primary mb-1"></h3>
+        <p id="confirm-message" class="text-sm text-text-secondary mb-5"></p>
+        <div class="flex gap-2">
+            <button onclick="closeConfirmDialog()" class="flex-1 border border-border rounded-xl py-2.5 text-sm font-medium text-text-primary">
+                Cancel
+            </button>
+            <button id="confirm-action-btn" class="flex-1 bg-danger text-white rounded-xl py-2.5 text-sm font-semibold">
+                Delete
+            </button>
+        </div>
+    </div>
+</div>
+{{end}}

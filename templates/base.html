@@ -5,26 +5,34 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Jarabiz</title>
-    {{template "theme-init-script" .}}
-    {{template "head-assets" .}}
+    {{template "theme-init-script" .}} {{template "head-assets" .}}
   </head>
 
   <body class="bg-bg text-text-primary min-h-screen">
-    {{template "sidebar" .}} {{template "mobile-topbar" .}} {{template
+    {{template "sidebar" .}} {{template
     "mobile-menu" .}}
 
-    <main class="md:ml-[72px] pt-14 md:pt-0 pb-20 md:pb-0 px-3 md:px-8 py-6">
+    <header id="mobile-topbar-wrapper">{{template "mobile-topbar" .}}</header>
+    
+    <!-- in base.html, near top of <body> -->
+    <div id="htmx-indicator" class="htmx-indicator fixed top-0 left-0 right-0 h-0.5 bg-accent z-[200]"></div>
+
+    <main
+      id="main-content"
+      class="md:ml-[72px] pt-14 md:pt-0 pb-20 md:pb-0 px-3 md:px-8 py-6"
+    >
       {{if eq .ContentTemplate "pos-content"}}{{template "pos-content" .}}
       {{else if eq .ContentTemplate "account-content"}}{{template
       "account-content" .}} {{else if eq .ContentTemplate
       "products-content"}}{{template "products-content" .}} {{else if eq
-      .ContentTemplate "sales-content"}}{{template "sales-content" .}}
-      {{else if eq .ContentTemplate "account-content"}}{{template
-      "account-content" .}} {{end}}
+      .ContentTemplate "sales-content"}}{{template "sales-content" .}} {{else if
+      eq .ContentTemplate "account-content"}}{{template "account-content" .}}
+      {{end}}
     </main>
 
-    {{template "bottom-nav" .}}
+    <nav id="bottom-nav-wrapper">{{template "bottom-nav" .}}</nav>
 
+    {{template "confirm-dialog" .}}
     <script>
       function toggleMobileMenu() {
         document
@@ -41,6 +49,10 @@
         document.body.style.touchAction = lock ? "none" : "";
       }
     </script>
+    <script src="/static/js/toast.js"></script>
+    <script src="/static/js/cart.js"></script>
+    <script src="/static/js/app.js"></script>
+  
   </body>
 </html>
 {{end}} {{define "content"}}{{end}}

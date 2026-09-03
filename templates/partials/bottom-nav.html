@@ -1,20 +1,20 @@
 {{define "bottom-nav"}}
 <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-surface border-t border-border rounded-t-3xl flex justify-around py-3 z-40">
-   <a href="/pos" class="flex flex-col items-center gap-0.5 font-medium text-[11px] {{if eq .Active "pos"}}text-text-primary{{else}}text-text-secondary{{end}}">
+   <a onclick="tapFeedback()" href="/pos" hx-get="/pos" hx-target="#main-content" hx-swap="innerHTML" hx-push-url="true" class="flex flex-col items-center gap-0.5 font-medium text-[11px] {{if eq .Active "pos"}}text-text-primary{{else}}text-text-secondary{{end}}">
         {{if eq .Active "pos"}}{{template "icon-pos-solid"}}{{else}}{{template "icon-pos-outline"}}{{end}}
         POS
     </a>
 
-    <a href="/sales" class="flex flex-col items-center font-medium gap-0.5 text-[11px] {{if eq .Active "sales"}}text-primary{{else}}text-text-secondary{{end}}">
+    <a onclick="tapFeedback()" href="/sales" hx-get="/sales" hx-target="#main-content" hx-swap="innerHTML" hx-push-url="true" class="flex flex-col items-center font-medium gap-0.5 text-[11px] {{if eq .Active "sales"}}text-primary{{else}}text-text-secondary{{end}}">
         {{if eq .Active "sales"}}{{template "icon-sale-solid"}}{{else}}{{template "icon-sale-outline"}}{{end}}
         Sales
     </a>
 
-    <a href="/products" class="flex flex-col items-center font-medium gap-0.5 text-[11px] {{if eq .Active "products"}}text-primary{{else}}text-text-secondary{{end}}">
+    <a onclick="tapFeedback()" href="/products" hx-get="/products" hx-target="#main-content" hx-swap="innerHTML" hx-push-url="true" class="flex flex-col items-center font-medium gap-0.5 text-[11px] {{if eq .Active "products"}}text-primary{{else}}text-text-secondary{{end}}">
         {{if eq .Active "products"}}{{template "icon-product-solid"}}{{else}}{{template "icon-product-outline"}}{{end}} Products
     </a>
 
-    <a href="/account" class="flex flex-col items-center font-medium gap-0.5 text-[11px] {{if eq .Active "account"}}text-primary{{else}}text-text-secondary{{end}}">
+    <a onclick="tapFeedback()" href="/account" class="flex flex-col items-center font-medium gap-0.5 text-[11px] {{if eq .Active "account"}}text-primary{{else}}text-text-secondary{{end}}">
        {{if eq .Active "account"}}{{template "icon-grid-solid"}}{{else}}{{template "icon-grid-outline"}}{{end}}
         More
     </a>

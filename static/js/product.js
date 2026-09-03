@@ -73,6 +73,7 @@ function adjustQty(delta) {
 }
 
 function openRestockSheet(
+    id,
     name,
     category,
     imageUrl,
@@ -80,10 +81,12 @@ function openRestockSheet(
     sellingPrice,
     costPrice,
 ) {
+    console.log(id, name, category, imageUrl)
+    document.getElementById('restock-sheet').dataset.productId = id;
     document.getElementById("restock-product-name").textContent = name;
     document.getElementById("restock-product-category").textContent = category;
     document.getElementById("restock-product-image").innerHTML = imageUrl
-        ? `<img src="${imageUrl}" class="w-full h-full object-cover" />`
+        ? `<img src="${imageUrl}" alt="${name}" class="w-full h-full object-cover" />`
         : "";
 
     restockValues.quantity = currentQty;
@@ -107,8 +110,71 @@ function closeRestockSheet() {
     lockBodyScroll(false);
 }
 
-function submitRestock() {
-    console.log("Restock submitted:", restockValues);
-    // TODO: hx-post to inventory-service
-    closeRestockSheet();
+async function submitRestock() {
+    const productId = document.getElementById('restock-sheet').dataset.productId;
+
+    try {
+        const resp = await fetch(`/products/${productId}/restock`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                quantity: restockValues.quantity,
+                selling_price: restockValues.selling,
+                cost_price: restockValues.cost
+            })
+        });
+
+        const toastMsg = resp.headers.get('X-Toast-Message');
+        closeRestockSheet();
+
+        if (!resp.ok) {
+            showToast(toastMsg || 'Could not update stock', 'error');
+            return;
+        }
+
+        showToast(toastMsg || 'Stock updated', 'success');
+        setTimeout(() => {
+            htmx.ajax('GET', '/products', { target: '#main-content', swap: 'innerHTML' });
+        }, 800);
+
+    } catch (err) {
+        closeRestockSheet();
+        showToast('Network error. Try again.', 'error');
+    }
+}
+
+function filterByCategory(category, chipEl) {
+    document.querySelectorAll('[data-category]').forEach(card => {
+        const show = category === 'All' || card.dataset.category === category;
+        card.style.display = show ? '' : 'none';
+    });
+
+    document.querySelectorAll('.category-chip').forEach(chip => {
+        chip.classList.remove('border-accent', 'bg-accent-soft', 'text-accent');
+        chip.classList.add('border-border', 'text-text-secondary');
+    });
+    chipEl.classList.remove('border-border', 'text-text-secondary');
+    chipEl.classList.add('border-accent', 'bg-accent-soft', 'text-accent');
+}
+
+function deleteProductQuick(id, btnEl) {
+    showConfirmDialog(
+        'Delete Product',
+        'This cannot be undone.',
+        async () => {
+            try {
+                const resp = await fetch(`/products/${id}`, { method: 'DELETE' });
+                const toastMsg = resp.headers.get('X-Toast-Message');
+                if (!resp.ok) {
+                    showToast(toastMsg || 'Could not delete product', 'error');
+                    return;
+                }
+                showToast(toastMsg || 'Product deleted', 'success');
+                const row = btnEl.closest('a[data-category]');
+                if (row) row.remove();
+            } catch (err) {
+                showToast('Network error. Try again.', 'error');
+            }
+        }
+    );
 }

@@ -46,6 +46,7 @@ func (h *AuthHandler) LoginSubmit(w http.ResponseWriter, r *http.Request) {
 	}
 
 	session.SetToken(w, result.AccessToken)
+	session.SetUserName(w, result.User.Username)
 
 	// Fetch user's stores and set a default active store
 	stores, err := h.AccountClient.GetUserStores(result.User.ID, result.AccessToken)

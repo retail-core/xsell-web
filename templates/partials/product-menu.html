@@ -5,7 +5,7 @@
     </button>
 
     <div class="product-menu-popover hidden absolute right-0 top-full gap-2 mt-1 w-44 bg-surface border border-border rounded-xl shadow-lg py- z-30">
-        <button onclick="openRestockSheet('{{.Name}}', '{{.Category}}', '{{.ImageURL}}', {{.StockCount}}, 1245, 900)" class="w-full flex items-center gap-2 px-3 py-3 text-sm text-text-primary hover:bg-surface-alt text-left">
+        <button onclick="openRestockSheet('{{.ID}}', '{{js .Name}}', '{{.Category}}', '{{.ImageURL}}', {{.StockCount}}, {{.SellingPriceRaw}}, {{.CostPriceRaw}})" class="w-full flex items-center gap-2 px-3 py-3 text-sm text-text-primary hover:bg-surface-alt text-left">
             {{template "icon-plus-outline"}}
             Restock
         </button>
@@ -14,7 +14,7 @@
             Deactivate
         </button>
         <div class="border-t border-border my-1"></div>
-        <button class="w-full flex items-center gap-2 px-3 py-3 text-sm text-danger hover:bg-danger-soft text-left">
+        <button type="button" onclick="deleteProductQuick('{{.ID}}', this)" class="w-full flex items-center gap-2 px-3 py-3 text-sm text-danger hover:bg-danger-soft text-left">
             {{template "icon-trash-outline"}}
             Delete
         </button>

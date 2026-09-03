@@ -6,7 +6,6 @@ import (
 	"os"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/go-chi/chi/v5/middleware"
 	"github.com/joho/godotenv"
 	"github.com/retail-core/xsell-web/internal/clients"
 	"github.com/retail-core/xsell-web/internal/handlers"
@@ -56,7 +55,7 @@ func main() {
 
 	r := chi.NewRouter()
 	// r.Use(middleware.Logger)
-	r.Use(middleware.Recoverer)
+	r.Use(m_middleware.Recover(__logger))
 
 	fileServer := http.FileServer(http.Dir("./static"))
 	r.Handle("/static/*", http.StripPrefix("/static/", fileServer))
@@ -83,12 +82,12 @@ func main() {
 		protected.Get("/pos", inventoryHandler.POS)
 		protected.Get("/sales", salesHandler.Sales)
 		protected.Get("/account", accountHandler.Account)
-		// protected.Get("/products/new", inventoryHandler.ProductFormPage)
-		// protected.Get("/products/{id}/edit", inventoryHandler.ProductFormPage)
 		protected.Get("/stores", accountHandler.StoresPage)
 		protected.Get("/settings", accountHandler.SettingsPage)
 		protected.Get("/store-switcher", accountHandler.StoreSwitcherSheet)
 		protected.Post("/switch-store", accountHandler.SwitchStore)
+		protected.Post("/pos/checkout", salesHandler.Checkout)
+		protected.Get("/orders/{id}", salesHandler.OrderDetail)
 	})
 
 	r.Group(func(owner chi.Router) {
@@ -102,6 +101,12 @@ func main() {
 		owner.Get("/stores/new", accountHandler.StoreFormPage)
 		owner.Get("/stores/{id}/edit", accountHandler.StoreFormPage)
 		owner.Get("/subscription", accountHandler.SubscriptionPage)
+		owner.Get("/products/new", inventoryHandler.ProductFormPage)
+		owner.Get("/products/{id}/edit", inventoryHandler.ProductFormPage)
+		owner.Post("/products/{id}/restock", inventoryHandler.RestockSubmit)
+		owner.Delete("/products/{id}", inventoryHandler.DeleteProduct)
+		owner.Post("/products/new", inventoryHandler.ProductFormSubmit)
+		owner.Post("/products/{id}/edit", inventoryHandler.ProductFormSubmit)
 	})
 
 	r.NotFound(func(w http.ResponseWriter, r *http.Request) {

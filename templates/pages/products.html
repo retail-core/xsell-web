@@ -1,84 +1,77 @@
 {{define "products-content"}}
-<div class="max-w-5xl mx-auto mt-3">
-  <!-- Category chips (same pattern as POS) -->
-  <div
-    class="fixed top-16 left-0 right-0 z-20 bg-bg pt-1 pb-3 px-2 md:static md:pt-0 mt-1"
-  >
-    <div class="flex gap-2 overflow-x-auto scrollbar-none px-2">
-      {{range .Categories}}
-      <button
-        class="shrink-0 flex flex-col items-start px-4 py-2 rounded-xl border {{if .Active}}border-accent bg-accent-soft text-accent{{else}}border-border text-text-secondary hover:border-text-secondary{{end}}"
-      >
-        <span class="text-sm font-medium">{{.Name}}</span>
-        <span class="text-[11px] opacity-70">{{.Count}}</span>
-      </button>
-      {{end}}
-    </div>
-  </div>
-
-  <!-- Product list -->
-  <div class="pt-20 pb-24 divide-y divide-border">
-    {{range .Products}}
-    <a href="/products/{{.ID}}/edit" class="flex gap-3 py-3">
-      <div
-        class="w-14 h-14 rounded-xl bg-surface-alt borde border-border overflow-hidden shrink-0 flex items-center justify-center text-text-secondary"
-      >
-        {{if .ImageURL}}
-        <img
-          src="{{.ImageURL}}"
-          alt="{{.Name}}"
-          class="w-full h-full object-cover"
-        />
-        {{else}} {{template "icon-product-outline"}} {{end}}
+  <div class="max-w-5xl mx-auto mt-2">
+    {{if .LoadError}}
+      <div class="flex flex-col items-center justify-center py-16 text-center">
+        <p class="text-sm text-text-secondary">Couldn't load your inventory. Pull down to retry.</p>
       </div>
-
-      <div class="flex-1 min-w-0">
-        <p class="text-sm font-medium text-text-primary truncate mb-1">
-          {{.Name}}
-        </p>
-        <div class="flex items-center gap-2 flex-wrap">
-          <span
-            class="text-sm font-semibold {{if .LowStock}}text-danger{{else}}text-accent{{end}}"
-          >
-            {{.StockLabel}}
-          </span>
-          <span
-            class="text-xs px-2 py-0.5 rounded-full bg-surface-alt border border-border text-text-secondary"
-          >
-            {{.Category}}
-          </span>
+    {{else if not .Products}}
+      <div class="flex flex-col items-center justify-center py-20 text-center px-6">
+        <div class="w-16 h-16 rounded-full bg-surface-alt text-text-secondary flex items-center justify-center mb-4">
+          {{template "icon-product-outline"}}
         </div>
+        <h3 class="text-base font-display font-semibold text-text-primary mb-1">No products yet</h3>
+        <p class="text-sm text-text-secondary mb-6">Add your first product to start tracking inventory and sales.</p>
+        <button onclick="toggleAddProductSheet()"
+                class="inline-flex items-center gap-2 bg-accent text-black rounded-xl px-5 py-2.5 text-sm font-semibold">
+          {{template "icon-plus-outline"}} Add Product
+        </button>
       </div>
-
-      <div
-        onclick="
-          event.preventDefault();
-          event.stopPropagation();
-        "
-        class="text-right shrink-0"
-      >
-        <p class="text-sm font-semibold text-text-primary mb-2 font-display">
-          {{.Price}}
-        </p>
-        {{template "product-menu" .}}
+    {{else}}
+      <!-- Category chips (same pattern as POS) -->
+      {{if .Products}}
+        <div class="fixed top-16 left-0 right-0 z-20 bg-bg pt-1 pb-3 px-2 md:static md:pt-0 mt-1">
+          <div class="flex gap-2 overflow-x-auto scrollbar-none px-2">
+            {{range .Categories}}
+            <button onclick="tapFeedback(); filterByCategory('{{.Name}}', this)"
+                    class="category-chip shrink-0 flex flex-col items-start px-4 py-2 rounded-xl border {{if .Active}}border-accent bg-accent-soft text-accent{{else}}border-border text-text-secondary hover:border-text-secondary{{end}}">
+              <span class="text-sm font-medium">{{.Name}}</span>
+              <span class="text-[11px] opacity-70">{{.Count}} items</span>
+              </button>
+            {{end}}
+          </div>
+        </div>
+      {{end}}
+      <!-- Product list -->
+      <div class="pt-20 pb-12 divide-y divide-border">
+        {{range .Products}}
+          <a href="/products/{{.ID}}/edit" data-category="{{.Category}}" data-name="{{.Name}}" class="flex gap-3 py-3">
+            <div class="w-14 h-14 rounded-xl bg-surface-alt borde border-border overflow-hidden shrink-0 flex items-center justify-center text-text-secondary">
+              {{if .ImageURL}}
+                <img src="{{.ImageURL}}" alt="{{.Name}}" class="w-full h-full object-cover" />
+        {{else}} {{template "icon-product-outline"}} {{end}}
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="text-sm font-medium text-text-primary truncate mb-1">{{.Name}}</p>
+            <div class="flex items-center gap-2 flex-wrap">
+              <span class="text-sm font-semibold {{if .LowStock}}text-danger{{else}}text-accent{{end}}">{{.StockLabel}}</span>
+              <span class="text-xs px-2 py-0.5 capitalize rounded-full bg-surface-alt border border-border text-text-secondary">
+                {{.Category}}
+              </span>
+            </div>
+          </div>
+          <div onclick="
+                event.preventDefault();
+                event.stopPropagation();
+              "
+               class="text-right shrink-0">
+            <p class="text-sm font-semibold text-text-primary mb-2 font-display">{{.Price}}</p>
+            {{if $.IsOwner}}
+              {{template "product-menu" .}}
+            {{end}}
+          </div>
+          </a>
+        {{end}}
       </div>
-    </a>
     {{end}}
   </div>
-</div>
-
-<!-- Floating add button -->
-<button
-  onclick="toggleAddProductSheet()"
-  class="fixed bottom-20 md:bottom-6 right-4 md:right-8 w-14 h-14 rounded-full bg-accent text-black flex items-center justify-center shadow-lg z-30 shadow-accent-soft"
->
-  {{template "icon-plus-outline"}}
-</button>
-
-{{template "add-product-sheet" .}}
-
-
-<script src="/static/js/product.js">
-</script>
-
-{{template "restock-sheet" .}} {{end}}
+  <!-- Floating add button -->
+  {{if .IsOwner}}
+    <button onclick="toggleAddProductSheet()"
+            class="fixed bottom-20 md:bottom-6 right-4 md:right-8 w-14 h-14 rounded-full bg-accent text-black flex items-center justify-center shadow-lg z-30 shadow-accent-soft">
+      {{template "icon-plus-outline"}}
+    </button>
+  {{end}}
+  {{template "add-product-sheet" .}}
+  {{template "restock-sheet" .}}
+  <script src="/static/js/product.js"></script>
+{{end}}
