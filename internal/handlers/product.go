@@ -138,6 +138,7 @@ type ProductRow struct {
 	StockLabel                          string
 	LowStock                            bool
 	SellingPriceRaw, CostPriceRaw       float64
+	IsActive                            bool
 }
 
 func buildProductRows(items []clients.InventoryItem) []ProductRow {
@@ -177,6 +178,7 @@ func buildProductRows(items []clients.InventoryItem) []ProductRow {
 			LowStock:        lowStock,
 			SellingPriceRaw: item.SellingPrice,
 			CostPriceRaw:    costPrice,
+			IsActive:        item.IsActive,
 		})
 	}
 	return rows

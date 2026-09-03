@@ -136,3 +136,29 @@ func (c *InventoryClient) CreateInventory(storeID, token string, req CreateInven
 	}
 	return nil
 }
+
+type UpdateInventoryStatusRequest struct {
+	Status bool `json:"status"`
+}
+
+func (c *InventoryClient) UpdateStatus(storeID, inventoryID, token string, active bool) error {
+	payload, _ := json.Marshal(UpdateInventoryStatusRequest{Status: active})
+
+	req, err := http.NewRequest("PATCH", c.BaseURL+"/stores/"+storeID+"/inventories/"+inventoryID+"/status", bytes.NewBuffer(payload))
+	if err != nil {
+		return err
+	}
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", "Bearer "+token)
+
+	resp, err := c.HTTP.Do(req)
+	if err != nil {
+		return fmt.Errorf("inventory service unreachable: %w", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return fmt.Errorf("status update failed with status %d", resp.StatusCode)
+	}
+	return nil
+}

@@ -178,3 +178,51 @@ function deleteProductQuick(id, btnEl) {
         }
     );
 }
+
+async function toggleProductStatus(id, currentlyActive, btnEl) {
+    const newStatus = !currentlyActive;
+
+    // Close the popover immediately
+    const popover = btnEl.closest('.product-menu-popover');
+    if (popover) popover.classList.add('hidden');
+
+    try {
+        const resp = await fetch(`/products/${id}/status`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ active: newStatus })
+        });
+
+        const toastMsg = resp.headers.get('X-Toast-Message');
+
+        if (!resp.ok) {
+            showToast(toastMsg || 'Could not update status', 'error');
+            return;
+        }
+
+        showToast(toastMsg || 'Status updated', 'success');
+
+        // Update the row in place: toggle badge, update button's own state/label
+        const row = btnEl.closest('a[data-category]');
+        if (row) {
+            let badge = row.querySelector('.inactive-badge');
+            if (!newStatus) {
+                if (!badge) {
+                    badge = document.createElement('span');
+                    badge.className = 'inactive-badge text-[10px] px-2 py-0.5 rounded-full bg-danger-soft text-danger shrink-0 ml-2';
+                    badge.textContent = 'Inactive';
+                    row.querySelector('.flex-1').appendChild(badge);
+                }
+            } else if (badge) {
+                badge.remove();
+            }
+        }
+
+        btnEl.setAttribute('onclick', `toggleProductStatus('${id}', ${newStatus}, this)`);
+        btnEl.querySelector('span').textContent = newStatus ? 'Deactivate' : 'Activate';
+
+    } catch (err) {
+        console.error(err);
+        showToast('Network error. Try again.', 'error');
+    }
+}

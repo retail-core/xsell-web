@@ -107,6 +107,7 @@ func main() {
 		owner.Delete("/products/{id}", inventoryHandler.DeleteProduct)
 		owner.Post("/products/new", inventoryHandler.ProductFormSubmit)
 		owner.Post("/products/{id}/edit", inventoryHandler.ProductFormSubmit)
+		owner.Patch("/products/{id}/status", inventoryHandler.ToggleStatus)
 	})
 
 	r.NotFound(func(w http.ResponseWriter, r *http.Request) {

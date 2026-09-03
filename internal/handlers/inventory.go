@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"encoding/json"
 	"net/http"
 	"strconv"
 
@@ -64,5 +65,33 @@ func (h *InventoryHandler) ProductFormSubmit(w http.ResponseWriter, r *http.Requ
 	}
 
 	w.Header().Set("X-Toast-Message", "Product saved")
+	w.WriteHeader(http.StatusOK)
+}
+
+func (h *InventoryHandler) ToggleStatus(w http.ResponseWriter, r *http.Request) {
+	token := middleware.GetToken(r)
+	activeStore, _ := session.GetActiveStore(r)
+	inventoryID := chi.URLParam(r, "id")
+
+	var body struct {
+		Active bool `json:"active"`
+	}
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		http.Error(w, "invalid request", http.StatusBadRequest)
+		return
+	}
+
+	if err := h.InventoryClient.UpdateStatus(activeStore.ID, inventoryID, token, body.Active); err != nil {
+		h.Log.Error("status update failed", "inventory_id", inventoryID, "error", err)
+		w.Header().Set("X-Toast-Message", "Could not update product status")
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	msg := "Product deactivated"
+	if body.Active {
+		msg = "Product activated"
+	}
+	w.Header().Set("X-Toast-Message", msg)
 	w.WriteHeader(http.StatusOK)
 }

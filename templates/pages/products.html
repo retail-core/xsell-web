@@ -47,6 +47,9 @@
               <span class="text-xs px-2 py-0.5 capitalize rounded-full bg-surface-alt border border-border text-text-secondary">
                 {{.Category}}
               </span>
+              {{if not .IsActive}}
+                <span class="inactive-badge text-[10px] px-2 py-0.5 rounded-full bg-danger-soft text-danger shrink-0 ml-2">Inactive</span>
+              {{end}}
             </div>
           </div>
           <div onclick="
