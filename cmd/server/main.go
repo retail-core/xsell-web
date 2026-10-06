@@ -47,11 +47,16 @@ func main() {
 		SalesClient:  salesClient,
 	}
 
+	productClient := clients.NewProductClient(os.Getenv("PRODUCT_SERVICE_URL"))
 	inventoryClient := clients.NewInventoryClient(os.Getenv("INVENTORY_SERVICE_URL"))
+
 	inventoryHandler := &handlers.InventoryHandler{
 		ShellHandler:    handlers.ShellHandler{Tmpl: tmpl, Log: __logger},
 		InventoryClient: inventoryClient,
+		ProductClient:   productClient,
 	}
+
+	
 
 	r := chi.NewRouter()
 	// r.Use(middleware.Logger)
@@ -108,6 +113,7 @@ func main() {
 		owner.Post("/products/new", inventoryHandler.ProductFormSubmit)
 		owner.Post("/products/{id}/edit", inventoryHandler.ProductFormSubmit)
 		owner.Patch("/products/{id}/status", inventoryHandler.ToggleStatus)
+		owner.Post("/products/upload-image", inventoryHandler.UploadProductImage)
 	})
 
 	r.NotFound(func(w http.ResponseWriter, r *http.Request) {
@@ -115,6 +121,6 @@ func main() {
 		tmpl.ExecuteTemplate(w, "not-found-page", nil)
 	})
 
-	__logger.Info("xsell-web listening on :8000")
-	http.ListenAndServe(":8000", r)
+	__logger.Info("xsell-web listening on :8011")
+	http.ListenAndServe(":8011", r)
 }

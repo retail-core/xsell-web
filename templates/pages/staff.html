@@ -1,51 +1,52 @@
 {{define "staff-page"}}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>My Staff — Jarabiz</title>
-    {{template "theme-init-script" .}}
-    {{template "head-assets" .}}
-</head>
-<body class="bg-bg text-text-primary min-h-screen">
-
-    {{template "focused-page-header" dict "Title" .PageTitle}}
-
-    <main class="pt-20 px-3 md:px-8 max-w-2xl mx-auto pb-24">
-
-        <div class="flex items-center justify-between mb-4">
-            <p class="text-sm text-text-secondary">{{len .Staff}} team members</p>
-        </div>
-
-        <div class="bg-surface border border-border rounded-2xl divide-y divide-border overflow-hidden">
-            {{range .Staff}}
-            <a href="/staff/{{.ID}}/edit" class="flex items-center gap-3 p-4 hover:bg-surface-alt">
-                <div class="w-10 h-10 rounded-full bg-accent-soft text-accent flex items-center justify-center text-sm font-semibold shrink-0">
-                    {{slice .Name 0 1}}
-                </div>
-                <div class="flex-1 min-w-0">
-                    <p class="text-sm font-display font-medium text-text-primary truncate">{{.Name}}</p>
-                    <p class="text-xs text-text-secondary">{{.Role}}</p>
-                </div>
-                <span class="text-xs font-medium px-2.5 py-1 rounded-full shrink-0
-                    {{if eq .Status "Active"}}bg-accent-soft text-accent
-                    {{else if eq .Status "Pending"}}bg-surface-alt text-text-secondary
-                    {{else}}bg-danger-soft text-danger{{end}}">
-                    {{.Status}}
-                </span>
-            </a>
-            {{end}}
-        </div>
-
-    </main>
-
-    <!-- Floating add button -->
-    <a href="/staff/new" class="fixed bottom-6 right-4 md:right-8 w-14 h-14 rounded-full bg-accent text-black flex items-center justify-center shadow-lg z-30">
-        {{template "icon-plus-outline"}}
-    </a>
-
-    {{template "theme-toggle-script" .}}
-</body>
-</html>
+    <!DOCTYPE html>
+    <html lang="en">
+        <head>
+            <meta charset="UTF-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+            <title>My Staff — Jarabiz</title>
+            {{template "theme-init-script" .}}
+            {{template "head-assets" .}}
+        </head>
+        <body class="bg-bg text-text-primary min-h-screen">
+            {{template "focused-page-header" dict "Title" .PageTitle}}
+            <main class="pt-20 px-3 md:px-8 max-w-2xl mx-auto pb-24">
+                {{if .LoadError}}
+                    <div class="flex flex-col items-center justify-center py-16 text-center">
+                        <p class="text-sm text-text-secondary">Couldn't load your staff. Pull down to retry.</p>
+                    </div>
+                {{else if not .Staff}}
+                    <div class="flex flex-col items-center justify-center py-20 text-center px-6">
+                        <p class="text-sm text-text-secondary">No staff added yet.</p>
+                    </div>
+                {{else}}
+                    <div class="flex items-center justify-between mb-4">
+                        <p class="text-sm text-text-secondary">{{len .Staff}} team members</p>
+                    </div>
+                    <div class="bg-surface border border-border rounded-2xl divide-y divide-border overflow-hidden">
+                        {{range .Staff}}
+                            <a href="/staff/{{.ID}}/edit" class="flex items-center gap-3 p-4 hover:bg-surface-alt">
+                                <div class="w-10 h-10 rounded-full bg-accent-soft text-accent flex items-center justify-center text-sm font-semibold shrink-0">
+                                    {{slice .Name 0 1}}
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-sm font-medium text-text-primary truncate">{{.Name}}</p>
+                                    <p class="text-xs text-text-secondary">{{.Role}}</p>
+                                </div>
+                        <span class="text-xs font-medium px-2.5 py-1 rounded-full shrink-0 {{if eq .Status "Active"}}bg-accent-soft text-accent {{else if eq .Status "Pending"}}bg-surface-alt text-text-secondary {{else}}bg-danger-soft text-danger{{end}}">
+                                {{.Status}}
+                            </span>
+                            </a>
+                        {{end}}
+                    </div>
+                    </main>
+                    <!-- Floating add button -->
+                    <a href="/staff/new"
+                       class="fixed bottom-6 right-4 md:right-8 w-14 h-14 rounded-full bg-accent text-black flex items-center justify-center shadow-lg z-30">
+                        {{template "icon-plus-outline"}}
+                    </a>
+                    {{template "theme-toggle-script" .}}
+                    </body>
+                    </html>
+                {{end}}
 {{end}}

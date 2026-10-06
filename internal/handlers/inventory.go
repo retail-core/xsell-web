@@ -14,6 +14,7 @@ import (
 type InventoryHandler struct {
 	ShellHandler
 	InventoryClient *clients.InventoryClient
+	ProductClient   *clients.ProductClient
 }
 
 func (h *InventoryHandler) ProductFormSubmit(w http.ResponseWriter, r *http.Request) {
@@ -31,6 +32,8 @@ func (h *InventoryHandler) ProductFormSubmit(w http.ResponseWriter, r *http.Requ
 	sellingPrice, _ := strconv.ParseFloat(r.FormValue("selling_price"), 64)
 	quantity, _ := strconv.Atoi(r.FormValue("quantity"))
 	reorderLevel, _ := strconv.Atoi(r.FormValue("reorder_level"))
+	isActive := r.FormValue("is_active") == "true"
+	imageURL := r.FormValue("image_url")
 
 	if name == "" || category == "" {
 		w.Header().Set("X-Toast-Message", "Name and category are required")
@@ -38,22 +41,44 @@ func (h *InventoryHandler) ProductFormSubmit(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	req := clients.CreateInventoryRequest{
-		Name:         &name,
-		Category:     &category,
-		SellingPrice: sellingPrice,
-		CostPrice:    &costPrice,
-		MinThreshold: &reorderLevel,
-		InitialQty:   quantity,
-	}
-	if barcode != "" {
-		req.Barcode = &barcode
-	}
-
 	var err error
 	if isEdit {
-		// err = h.InventoryClient.UpdateInventory(activeStore.ID, id, token, req)
+		req := clients.UpdateInventoryRequest{
+			Name:         &name,
+			Category:     &category,
+			SellingPrice: &sellingPrice,
+			CostPrice:    &costPrice,
+			MinThreshold: &reorderLevel,
+			InitialQty:   &quantity,
+			IsActive:     &isActive,
+			ImageUrl:     &imageURL,
+		}
+		if barcode != "" {
+			req.Barcode = &barcode
+		}
+
+		if imageURL != "" {
+			req.ImageUrl = &imageURL 
+		}
+
+		err = h.InventoryClient.UpdateInventory(activeStore.ID, id, token, req)
 	} else {
+		req := clients.CreateInventoryRequest{
+			Name:         &name,
+			Category:     &category,
+			SellingPrice: sellingPrice,
+			CostPrice:    &costPrice,
+			MinThreshold: &reorderLevel,
+			InitialQty:   quantity,
+		}
+		if barcode != "" {
+			req.Barcode = &barcode
+		}
+
+		if imageURL != "" {
+			req.ImageUrl = &imageURL 
+		}
+
 		err = h.InventoryClient.CreateInventory(activeStore.ID, token, req)
 	}
 
@@ -94,4 +119,27 @@ func (h *InventoryHandler) ToggleStatus(w http.ResponseWriter, r *http.Request) 
 	}
 	w.Header().Set("X-Toast-Message", msg)
 	w.WriteHeader(http.StatusOK)
+}
+
+func (h *InventoryHandler) UploadProductImage(w http.ResponseWriter, r *http.Request) {
+	token := middleware.GetToken(r)
+
+	r.ParseMultipartForm(10 << 20) // 10MB max
+	file, header, err := r.FormFile("image")
+	if err != nil {
+		http.Error(w, "no image provided", http.StatusBadRequest)
+		return
+	}
+	defer file.Close()
+
+	imageURL, err := h.ProductClient.UploadImage(header, token)
+	if err != nil {
+		h.Log.Error("image upload failed", "error", err)
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(map[string]string{"image_url": ""})
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]string{"image_url": imageURL})
 }

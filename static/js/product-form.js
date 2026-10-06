@@ -38,6 +38,11 @@ function deleteProduct(id) {
 }
 
 async function submitProductForm() {
+    if (imageUploadPromise) {
+        showToast('Finishing image upload...', 'success');
+        await imageUploadPromise;
+    }
+    
     const form = document.getElementById('product-form');
     clearAllFieldErrors('product-form');
 
@@ -83,4 +88,40 @@ async function submitProductForm() {
     } catch (err) {
         showToast('Network error. Try again.', 'error');
     }
+}
+
+let imageUploadPromise = null;
+
+async function handleImageSelect(input) {
+    const file = input.files[0];
+    if (!file) return;
+
+    // Instant local preview, before upload completes
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        const preview = document.getElementById('product-image-preview');
+        preview.src = e.target.result;
+        preview.classList.remove('hidden');
+        document.getElementById('product-image-placeholder').classList.add('hidden');
+    };
+    reader.readAsDataURL(file);
+
+    const formData = new FormData();
+    formData.append('image', file);
+
+     imageUploadPromise = fetch('/products/upload-image', { method: 'POST', body: formData })
+        .then(resp => resp.json())
+        .then(result => {
+            document.getElementById('product-image-url').value = result.image_url || '';
+            if (!result.image_url) {
+                showToast('Image upload failed, continuing without image', 'error');
+            }
+        })
+        .catch(() => {
+            document.getElementById('product-image-url').value = '';
+            showToast('Image upload failed, continuing without image', 'error');
+        })
+        .finally(() => {
+            imageUploadPromise = null;
+        });
 }

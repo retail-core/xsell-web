@@ -24,7 +24,7 @@ type Store struct {
 }
 
 func (c *AccountClient) GetUserStores(userID, token string) ([]Store, error) {
-	req, err := http.NewRequest("GET", c.BaseURL+"/v1/users/"+userID+"/stores", nil)
+	req, err := http.NewRequest("GET", c.BaseURL+"/users/"+userID+"/stores", nil)
 	if err != nil {
 		return nil, err
 	}
@@ -41,4 +41,33 @@ func (c *AccountClient) GetUserStores(userID, token string) ([]Store, error) {
 		return nil, err
 	}
 	return stores, nil
+}
+
+type Staff struct {
+	ID         string `json:"id"`
+	StoreID    string `json:"store_id"`
+	Username   string `json:"username"`
+	Email      string `json:"email"`
+	Role       string `json:"role"`
+	IsVerified bool   `json:"is_verified"`
+}
+
+func (c *AccountClient) GetStaff(storeID, token string) ([]Staff, error) {
+	req, err := http.NewRequest("GET", c.BaseURL+"/stores/"+storeID+"/staffs", nil)
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Set("Authorization", "Bearer "+token)
+
+	resp, err := c.HTTP.Do(req)
+	if err != nil {
+		return nil, fmt.Errorf("account service unreachable: %w", err)
+	}
+	defer resp.Body.Close()
+
+	var staff []Staff
+	if err := json.NewDecoder(resp.Body).Decode(&staff); err != nil {
+		return nil, err
+	}
+	return staff, nil
 }

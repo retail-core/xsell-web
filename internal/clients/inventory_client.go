@@ -110,6 +110,7 @@ type CreateInventoryRequest struct {
 	CostPrice    *float64 `json:"cost_price,omitempty"`
 	MinThreshold *int     `json:"min_threshold,omitempty"`
 	InitialQty   int      `json:"initial_qty"`
+	ImageUrl     *string  `json:"image_url,omitempty"`
 }
 
 func (c *InventoryClient) CreateInventory(storeID, token string, req CreateInventoryRequest) error {
@@ -159,6 +160,43 @@ func (c *InventoryClient) UpdateStatus(storeID, inventoryID, token string, activ
 
 	if resp.StatusCode != http.StatusOK {
 		return fmt.Errorf("status update failed with status %d", resp.StatusCode)
+	}
+	return nil
+}
+
+type UpdateInventoryRequest struct {
+	Name         *string  `json:"name,omitempty"`
+	Category     *string  `json:"category,omitempty"`
+	Barcode      *string  `json:"barcode,omitempty"`
+	SellingPrice *float64 `json:"selling_price,omitempty"`
+	CostPrice    *float64 `json:"cost_price,omitempty"`
+	MinThreshold *int     `json:"min_threshold,omitempty"`
+	InitialQty   *int     `json:"initial_qty,omitempty"`
+	IsActive     *bool    `json:"is_active,omitempty"`
+	ImageUrl     *string  `json:"image_url,omitempty"`
+}
+
+func (c *InventoryClient) UpdateInventory(storeID, inventoryID, token string, req UpdateInventoryRequest) error {
+	payload, err := json.Marshal(req)
+	if err != nil {
+		return err
+	}
+
+	httpReq, err := http.NewRequest("PUT", c.BaseURL+"/stores/"+storeID+"/inventories/"+inventoryID, bytes.NewBuffer(payload))
+	if err != nil {
+		return err
+	}
+	httpReq.Header.Set("Content-Type", "application/json")
+	httpReq.Header.Set("Authorization", "Bearer "+token)
+
+	resp, err := c.HTTP.Do(httpReq)
+	if err != nil {
+		return fmt.Errorf("inventory service unreachable: %w", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return fmt.Errorf("update failed with status %d", resp.StatusCode)
 	}
 	return nil
 }

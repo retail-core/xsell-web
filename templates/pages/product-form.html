@@ -17,13 +17,21 @@
             <label class="block text-xs font-medium text-text-secondary mb-2">Product Image</label>
             <!-- src="{{.Form.ImageURL}}" -->
             <div class="relative w-full aspect-video bg-surface-alt border border-dashed border-border rounded-xl flex flex-col items-center justify-center gap-2 text-text-secondary overflow-hidden">
-              {{if .Form.ImageURL}}
-                <img src="{{.Form.ImageURL}}" alt="{{.Form.Name}}" class="w-full h-full object-cover absolute inset-0" />
-              {{else}} {{template "icon-plus-outline"}}
+              <img id="product-image-preview"
+                   src="{{.Form.ImageURL}}"
+                   alt="{{.Form.Name}}"
+                   class="w-full h-full object-cover absolute inset-0 {{if not .Form.ImageURL}}hidden{{end}}" />
+              <div id="product-image-placeholder" class="{{if .Form.ImageURL}}hidden{{end}} flex flex-col items-center gap-2">
+                {{template "icon-plus-outline"}}
                 <span class="text-xs">Tap to upload image</span>
-              {{end}}
-              <input type="file" accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer" />
+              </div>
+              <input type="file"
+                     id="product-image-input"
+                     accept="image/*"
+                     onchange="handleImageSelect(this)"
+                     class="absolute inset-0 opacity-0 cursor-pointer" />
             </div>
+            <input type="hidden" name="image_url" id="product-image-url" value="{{.Form.ImageURL}}" />
           </div>
           {{template "ui-input" dict "Label" "Item Name" "Type" "text" "Name"
             "name" "Placeholder" "e.g. Hennessy XO Cognac 750ml" "Value" .Form.Name

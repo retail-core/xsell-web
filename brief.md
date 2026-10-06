@@ -1,0 +1,1 @@
+https://testflight.apple.com/v1/invite/d3d2af62005641d6b07f629e313826d786d8478dddb24484853351c0c46bfccd19678aacb?ct=M895K8A6L4&advp=10000&platform=ios
